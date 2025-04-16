@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.repository.BookRepository">
+	
+	<!-- 新規登録 -->
+	<insert id="insertBookData">
+		insert into book (
+			title,
+			author,
+			publiser, 
+			publiser_year,
+			detail,
+			purchase_date,
+			category,
+			book_image,
+			created_at,
+			update_at,
+			status,
+			borrow_date,
+			username,
+			address
+		) values (
+			#{title},
+			#{author},
+			#{publiser}, 
+			#{publiserYear},
+			#{detail},
+			cast(#{purchaseDate} as timestamp),
+			#{category},
+			#{bookImage},
+			#{createdAt},
+			#{updateAt},
+			1,
+			#{borrowDate},
+			#{username},
+			#{address}
+		)
+	</insert>
+	
+	<!-- 登録更新 -->
+	<update id="updateBookData">
+		update book set
+			title = #{title},
+			author = #{author},
+			publiser = #{publiser}, 
+			publiser_year = #{publiserYear},
+			detail = #{detail},
+			purchase_date = cast(#{purchaseDate} as timestamp),
+			category = #{category},
+			book_image = #{bookImage},
+			update_at = #{updateAt}
+			where id= #{id}
+	</update>
+	
+	<!-- 書籍IDから書籍情報を取得 -->
+	<select id="selectTargetBookData">
+		select
+			title,
+			author,
+			detail,
+			publiser,
+			publiser_year,
+			to_char(purchase_date, 'yyyy-mm-dd') as purchaseDate,
+			category
+			from book where id = #{id}
+	</select>
+	
+	<!-- 画像 -->
+	<select id="findImageById" resultType="byte[]">
+		select book_image from book where id = #{id}
+	</select>
+	
+</mapper>

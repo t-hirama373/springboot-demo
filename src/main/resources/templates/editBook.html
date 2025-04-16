@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>登録更新</title>
+</head>
+
+<style>
+	#submitBtn{
+		color:white; 
+	}
+	.btn-enabled{
+		background-color: black;
+	}
+	.btn-disabled{
+		background-color: lightgray;
+	}
+</style>
+
+<body>
+	<a href="/bookList">一覧へ戻る</a>
+	<h1>登録更新</h1>
+	
+	<form th:method="put" th:action="@{/bookList/{id}(id=${id})}" enctype="multipart/form-data" th:object="${book}">
+		
+		<img th:src="@{/bookList/image/{id}(id=${book.id})}" width="200" alt="book_image" />
+		
+		<label>画像+</label>
+		<input type="file" name="image" accept="image/*">
+		<br>
+		<p style="display:inline-block">タイトル（必須）</p>
+		<input type="text" id="title" name="title" th:value="*{title}" >
+		<br>
+		<p style="display:inline-block">著者（必須）</p>
+		<input type="text" id="author" name="author" th:value="*{author}">
+		<br>
+		<p style="display:inline-block">書籍概要</p>
+		<input type="text" name="detail" th:value="*{detail}">
+		<br>
+		<p style="display:inline-block">発行者</p>
+		<input type="text" name="publiser" th:value="*{publiser}">
+		<br>
+		<p style="display:inline-block">発行年</p>
+		<input
+			type="number" id="publiserYear" name="publiserYear" min="1900" max="2100"
+			th:value="*{publiserYear}"
+		>
+		<br>
+		<p style="display:inline-block">購入日（必須）</p>
+		<input type="date" id="purchaseDate" name="purchaseDate" th:value="*{purchaseDate}">
+		<br>
+		<p style="display:inline-block">カテゴリ（必須）</p>
+		<input type="text" id="category" name="category" th:value="*{category}">
+		<br>
+		<button type="submit" id="submitBtn" class="btn-disabled" disabled>更新</button>
+	</form>
+	
+	<script>
+		const titleInput = document.getElementById('title');
+		const authorInput = document.getElementById('author');
+		const purchaseDateInput = document.getElementById('purchaseDate');
+		const categoryInput = document.getElementById('category');
+		const submitBtn = document.getElementById('submitBtn');
+		
+		//ボタンの有効/無効を切替
+		function checkInputs() {
+			//タイトル、著者、購入日、カテゴリの入力確認
+			if(titleInput.value.trim() !== ''
+				&& authorInput.value.trim() !== ''
+				&& purchaseDateInput.value.trim() !== ''
+				&& categoryInput.value.trim() !== ''
+			){
+				//空白以外を確認
+				submitBtn.disabled = false;
+				submitBtn.classList.remove('btn-disabled');
+				submitBtn.classList.add('btn-enabled');
+			} else {
+				//空白を確認
+				submitBtn.disabled = true;
+				submitBtn.classList.remove('btn-enabled');
+				submitBtn.classList.add('btn-disabled');
+			}
+		}
+		
+		//必須項目にリスナーを付与
+		titleInput.addEventListener('input', checkInputs);
+		authorInput.addEventListener('input', checkInputs);
+		purchaseDateInput.addEventListener('input', checkInputs);
+		categoryInput.addEventListener('input', checkInputs);
+	</script>
+		
+	<script src="/js/jquery-3.7.1.min"></script>
+	<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

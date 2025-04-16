@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>新規登録</title>
+</head>
+
+<style>
+	h4{
+		text-align: center;
+	}
+	p,a{
+		font-size: small;
+	}
+	.grid-container{
+		display: grid;
+		grid-template-columns: 200px 1fr;
+		gap: 20px;
+		margin-left: 100px;
+		margin-right: 100px;
+	}
+	.grid-item1{
+		margin-top:10px;
+		justify-content: center;
+		background-color: #fff;
+	}
+	.grid-item2{
+		background-color: #fff;
+	}
+	.clmn{
+		display:inline-block;
+		margin-top:10px;
+		margin-bottom:10px;
+		margin-left:10px;
+		width:150px
+	}
+	.form1{
+		margin-left:10px;
+		width:485px
+	}
+	.form2{
+		margin-left:10px;
+		width:150px
+	}
+	textarea{
+		margin-top:10px;
+		margin-bottom:10px;
+		margin-left:10px;
+		width:485px;
+		height:75px;
+		resize:none;
+	}
+	row{
+		display: grid;
+		grid-template-columns: 150px 1fr;
+		gap:10px;
+		align-items: start;
+	}
+	#submitBtn{
+		color:white; 
+	}
+	.btn-enabled{
+		background-color: black;
+		cursor: pointer;
+	}
+	.btn-disabled{
+		background-color: lightgray;
+	}
+	.book_img{
+		display:flex;
+		justify-content: center;
+		align-items:center;
+		width:150px;
+		height:200px;
+		font-size: small;
+		color:black;
+		background-color:none;
+		border: dashed;
+		border-width: 1px;
+		cursor: pointer;
+	}
+</style>
+
+<body>
+	<h4>書籍管理システム</h4>
+	
+	<a href="/bookList" style=" margin-left: 50px">書籍一覧へ戻る</a>
+	
+	<h1 style="margin-top:100px; margin-left: 100px">新規登録</h1>
+	<hr style="margin-left: 100px; margin-right: 100px">
+	<p style="margin-left: 100px">登録する書籍情報を入力してください。</p>
+	
+	<form class="grid-container"
+		th:method="post" 
+		th:action="@{/bookList}" 
+		th:object="${book}" 
+		enctype="multipart/form-data"
+	>
+		<div class="grid-item1">
+			<label class="book_img">
+				image upload
+				<input type="file" name="image" accept="image/*" hidden>
+			</label>
+		</div>
+		<div class="grid-item2">
+			<p class="clmn">タイトル（必須）</p>
+			<input class="form1" type="text" id="title" name="title">
+			<br>
+			<p class="clmn">著者（必須）</p>
+			<input class="form1" type="text" id="author" name="author">
+			<br>
+			<div class="row">
+				<p style="margin-left:10px">書籍概要</p>
+				<textarea type="text" name="detail"></textarea>
+				<br>
+			</div>
+			<p class="clmn">発行者</p>
+			<input class="form2" style="width:150px" type="text" name="publiser">
+			<br>
+			<p class="clmn">発行年</p>
+			<input
+				class="form2"
+				type="number" 
+				id="publiserYear" 
+				name="publiserYear" 
+				min="1900" max="2100"
+			>
+			<br>
+			<p class="clmn">購入日（必須）</p>
+			<input
+				class="form2"
+				style="width:152px"
+				type="date"
+				id="purchaseDate"
+				name="purchaseDate"
+			>
+			<br>
+			<p class="clmn">カテゴリ（必須）</p>
+			<input class="form2" type="text" id="category" name="category">
+			<br>
+			<button
+				style="
+					border:none;
+					margin-top:20px;
+					margin-left:173px;
+					width:100px;
+					height:50px
+					"
+				type="submit"
+				id="submitBtn"
+				class="btn-disabled"
+				disabled>登録</button>
+		</div>
+		
+	</form>
+	
+	<script>
+		const titleInput = document.getElementById('title');
+		const authorInput = document.getElementById('author');
+		const purchaseDateInput = document.getElementById('purchaseDate');
+		const categoryInput = document.getElementById('category');
+		const submitBtn = document.getElementById('submitBtn');
+		
+		//ボタンの有効/無効を切替
+		function checkInputs() {
+			//タイトル、著者、購入日、カテゴリの入力確認
+			if(titleInput.value.trim() !== ''
+				&& authorInput.value.trim() !== ''
+				&& purchaseDateInput.value.trim() !== ''
+				&& categoryInput.value.trim() !== ''
+			){
+				//空白以外を確認
+				submitBtn.disabled = false;
+				submitBtn.classList.remove('btn-disabled');
+				submitBtn.classList.add('btn-enabled');
+			} else {
+				//空白を確認
+				submitBtn.disabled = true;
+				submitBtn.classList.remove('btn-enabled');
+				submitBtn.classList.add('btn-disabled');
+			}
+		}
+		
+		//必須項目にリスナーを付与
+		titleInput.addEventListener('input', checkInputs);
+		authorInput.addEventListener('input', checkInputs);
+		purchaseDateInput.addEventListener('input', checkInputs);
+		categoryInput.addEventListener('input', checkInputs);
+	</script>
+		
+	<script src="/js/jquery-3.7.1.min"></script>
+	<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>
