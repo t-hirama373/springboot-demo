@@ -66,8 +66,10 @@
 	</select>
 	
 	<!-- 画像 -->
-	<select id="findImageById" resultType="byte[]">
-		select book_image from book where id = #{id}
+	<select id="findImageBase64ById">
+		select regexp_replace(
+			encode(book_image, 'base64'),E'[\\n\\r]', '', 'g'
+		)
+		from book where id = #{id}
 	</select>
-	
 </mapper>

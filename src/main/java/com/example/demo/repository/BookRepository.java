@@ -19,5 +19,5 @@ public interface BookRepository {
 	BookDto selectTargetBookData(int id);
 	
 	//画像
-	byte[] findImageById(long id);
+	String findImageBase64ById(int id);
 }

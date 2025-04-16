@@ -45,7 +45,7 @@ public class BookService {
 	}
 	
 	//画像取得
-	public byte[] getImageById(long id) {
-		return bookRepository.findImageById(id);
+	public String getImageBase64ById(int id) {
+		return bookRepository.findImageBase64ById(id);
 	}
 }

@@ -36,10 +36,14 @@
 		width:150px
 	}
 	.form1{
+		margin-top:10px;
+		margin-bottom:10px;
 		margin-left:10px;
-		width:485px
+		width:470px;
 	}
 	.form2{
+		margin-top:10px;
+		margin-bottom:10px;
 		margin-left:10px;
 		width:150px
 	}
@@ -47,15 +51,9 @@
 		margin-top:10px;
 		margin-bottom:10px;
 		margin-left:10px;
-		width:485px;
+		width:470px;
 		height:75px;
 		resize:none;
-	}
-	row{
-		display: grid;
-		grid-template-columns: 150px 1fr;
-		gap:10px;
-		align-items: start;
 	}
 	#submitBtn{
 		color:white; 
@@ -78,17 +76,25 @@
 		background-color:none;
 		border: dashed;
 		border-width: 1px;
+	}
+	.upload_bt{
+		display:flex;
+		justify-content: center;
+		align-items:center;
+		width:100px;
+		height:30px;
+		font-size: small;
+		color:white;
+		background-color:black;
 		cursor: pointer;
 	}
 </style>
 
 <body>
 	<h4>書籍管理システム</h4>
-	
 	<a href="/bookList" style=" margin-left: 50px">書籍一覧へ戻る</a>
-	
 	<h1 style="margin-top:100px; margin-left: 100px">新規登録</h1>
-	<hr style="margin-left: 100px; margin-right: 100px">
+	<hr style="margin-left: 100px; width:865px">
 	<p style="margin-left: 100px">登録する書籍情報を入力してください。</p>
 	
 	<form class="grid-container"
@@ -98,47 +104,64 @@
 		enctype="multipart/form-data"
 	>
 		<div class="grid-item1">
-			<label class="book_img">
-				image upload
-				<input type="file" name="image" accept="image/*" hidden>
-			</label>
+			<div style="display:flex; flex-flow:column"></div>
+				<img
+					th:if="${base64Image != null}"
+					th:src="'data:image/jpeg;base64,'+ ${base64Image}"
+					width="150"
+				/>
+				<label
+					th:if="${base64Image == null}"
+					class="book_img"
+				>no image</label>
+				<p></p><br>
+				<label class="upload_bt">
+					image upload
+					<input type="file" name="image" accept="image/*" hidden>
+				</label>
+			</div>
 		</div>
 		<div class="grid-item2">
-			<p class="clmn">タイトル（必須）</p>
-			<input class="form1" type="text" id="title" name="title">
-			<br>
-			<p class="clmn">著者（必須）</p>
-			<input class="form1" type="text" id="author" name="author">
-			<br>
-			<div class="row">
-				<p style="margin-left:10px">書籍概要</p>
-				<textarea type="text" name="detail"></textarea>
-				<br>
+			<div style="display: flex;">
+				<p class="clmn">タイトル（必須）</p>
+				<input class="form1" type="text" id="title" name="title">
 			</div>
-			<p class="clmn">発行者</p>
-			<input class="form2" style="width:150px" type="text" name="publiser">
-			<br>
-			<p class="clmn">発行年</p>
-			<input
-				class="form2"
-				type="number" 
-				id="publiserYear" 
-				name="publiserYear" 
-				min="1900" max="2100"
-			>
-			<br>
-			<p class="clmn">購入日（必須）</p>
-			<input
-				class="form2"
-				style="width:152px"
-				type="date"
-				id="purchaseDate"
-				name="purchaseDate"
-			>
-			<br>
-			<p class="clmn">カテゴリ（必須）</p>
-			<input class="form2" type="text" id="category" name="category">
-			<br>
+			<div style="display: flex;">
+				<p class="clmn">著者（必須）</p>
+				<input class="form1" type="text" id="author" name="author">
+			</div>
+			<div style="display: flex;">
+				<p class="clmn">書籍概要</p>
+				<textarea type="text" name="detail"></textarea>
+			</div>
+			<div style="display: flex;">	
+				<p class="clmn">発行者</p>
+				<input class="form2" type="text" name="publiser">
+			</div>
+			<div style="display: flex;">
+				<p class="clmn">発行年</p>
+				<input
+					class="form2"
+					type="number" 
+					id="publiserYear" 
+					name="publiserYear" 
+					min="1900" max="2100"
+				>
+			</div>
+			<div style="display: flex;">
+				<p class="clmn">購入日（必須）</p>
+				<input
+					class="form2"
+					style="width:152px"
+					type="date"
+					id="purchaseDate"
+					name="purchaseDate"
+				>
+			</div>
+			<div style="display: flex;">
+				<p class="clmn">カテゴリ（必須）</p>
+				<input class="form2" type="text" id="category" name="category">
+			</div>
 			<button
 				style="
 					border:none;
@@ -151,17 +174,14 @@
 				id="submitBtn"
 				class="btn-disabled"
 				disabled>登録</button>
-		</div>
-		
+		</div>		
 	</form>
-	
 	<script>
 		const titleInput = document.getElementById('title');
 		const authorInput = document.getElementById('author');
 		const purchaseDateInput = document.getElementById('purchaseDate');
 		const categoryInput = document.getElementById('category');
 		const submitBtn = document.getElementById('submitBtn');
-		
 		//ボタンの有効/無効を切替
 		function checkInputs() {
 			//タイトル、著者、購入日、カテゴリの入力確認
@@ -180,8 +200,7 @@
 				submitBtn.classList.remove('btn-enabled');
 				submitBtn.classList.add('btn-disabled');
 			}
-		}
-		
+		}	
 		//必須項目にリスナーを付与
 		titleInput.addEventListener('input', checkInputs);
 		authorInput.addEventListener('input', checkInputs);
