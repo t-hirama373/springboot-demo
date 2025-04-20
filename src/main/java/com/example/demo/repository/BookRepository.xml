@@ -65,7 +65,7 @@
 			from book where id = #{id}
 	</select>
 	
-	<!-- 画像 -->
+	<!-- 書籍IDから画像取得 -->
 	<select id="findImageBase64ById">
 		select regexp_replace(
 			encode(book_image, 'base64'),E'[\\n\\r]', '', 'g'

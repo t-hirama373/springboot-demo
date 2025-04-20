@@ -38,13 +38,13 @@ public class BookService {
 		bookRepository.updateBookData(bookData);
 	}
 	
-	//書籍ID取得
+	//書籍IDから書籍情報を取得
 	@Transactional
 	public BookDto getTargetBookData(int id) {
 		return bookRepository.selectTargetBookData(id);
 	}
 	
-	//画像取得
+	//書籍IDから画像取得
 	public String getImageBase64ById(int id) {
 		return bookRepository.findImageBase64ById(id);
 	}

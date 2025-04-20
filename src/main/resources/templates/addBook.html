@@ -76,26 +76,21 @@
 		background-color:none;
 		border: dashed;
 		border-width: 1px;
-	}
-	.upload_bt{
-		display:flex;
-		justify-content: center;
-		align-items:center;
-		width:100px;
-		height:30px;
-		font-size: small;
-		color:white;
-		background-color:black;
-		cursor: pointer;
+		cursor:pointer; 
 	}
 </style>
 
 <body>
-	<h4>書籍管理システム</h4>
+	<h4>書籍管理システム@<span th:text="${username}"></span></h4>
 	<a href="/bookList" style=" margin-left: 50px">書籍一覧へ戻る</a>
 	<h1 style="margin-top:100px; margin-left: 100px">新規登録</h1>
 	<hr style="margin-left: 100px; width:865px">
-	<p style="margin-left: 100px">登録する書籍情報を入力してください。</p>
+	<p style="
+		margin-left: 100px;
+		margin-bottom:50px"
+	>
+		登録する書籍情報を入力してください。
+	</p>
 	
 	<form class="grid-container"
 		th:method="post" 
@@ -104,20 +99,22 @@
 		enctype="multipart/form-data"
 	>
 		<div class="grid-item1">
-			<div style="display:flex; flex-flow:column"></div>
-				<img
-					th:if="${base64Image != null}"
-					th:src="'data:image/jpeg;base64,'+ ${base64Image}"
-					width="150"
-				/>
+			<div style="display:flex; flex-flow:column">
+				<!--ファイルの選択(非表示)-->
+				<input
+					type="file"
+					id="imageInput"
+					name="image"
+					style="display: none; cursor:pointer;"
+					onchange="previewImage(this)" />
+				<!--画像添付前のラベル表示-->
 				<label
-					th:if="${base64Image == null}"
+					id="imagePlaceholder"
+					for="imageInput"
 					class="book_img"
-				>no image</label>
-				<p></p><br>
-				<label class="upload_bt">
+					style="cursor:pointer;"
+				>	
 					image upload
-					<input type="file" name="image" accept="image/*" hidden>
 				</label>
 			</div>
 		</div>
@@ -182,6 +179,7 @@
 		const purchaseDateInput = document.getElementById('purchaseDate');
 		const categoryInput = document.getElementById('category');
 		const submitBtn = document.getElementById('submitBtn');
+		
 		//ボタンの有効/無効を切替
 		function checkInputs() {
 			//タイトル、著者、購入日、カテゴリの入力確認
@@ -206,6 +204,30 @@
 		authorInput.addEventListener('input', checkInputs);
 		purchaseDateInput.addEventListener('input', checkInputs);
 		categoryInput.addEventListener('input', checkInputs);
+		
+		//アップロード画像を表示
+		function previewImage(input){
+			const file = input.files[0];
+			if(file){
+				const reader = new FileReader();
+				reader.onload = function(e){
+					const placeholder = document.getElementById('imagePlaceholder');
+					const existing = document.getElementById('preview');
+					if(existing){
+						existing.src = e.target.result;
+					} else if(placeholder){
+						const img = document.createElement('img');
+						img.id= 'preview';
+						img.src = e.target.result;
+						img.style.width = '150px';
+						img.style.cursor= 'pointer';
+						img.onclick = () => document.getElementById('imageInput').click();				
+						placeholder.replaceWith(img);
+					}
+				};
+				reader.readAsDataURL(file);
+			}
+		}
 	</script>
 		
 	<script src="/js/jquery-3.7.1.min"></script>

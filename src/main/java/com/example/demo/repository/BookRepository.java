@@ -18,6 +18,6 @@ public interface BookRepository {
 	//書籍IDから書籍情報を取得
 	BookDto selectTargetBookData(int id);
 	
-	//画像
+	//書籍IDから画像を取得
 	String findImageBase64ById(int id);
 }

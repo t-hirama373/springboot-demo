@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,16 +29,23 @@ public class BookController {
 	
 	//書籍一覧
 	@GetMapping
-	public String bookList() {
+	public String bookList(
+		@AuthenticationPrincipal UserDetails user,
+		Model model) {
+		String username = user.getUsername();
+		model.addAttribute("username",username);
 		return "bookList";
 	}
 	
 	//新規登録へ
 	@GetMapping("addBook")
 	public String addBook(
+		@AuthenticationPrincipal UserDetails user,
 		@ModelAttribute("book") BookDto bookDto,
 		Model model)
 	{
+		String username = user.getUsername();
+		model.addAttribute("username",username);
 		return "addBook";
 	}
 	
@@ -63,7 +72,13 @@ public class BookController {
 	
 	//登録更新へ
 	@GetMapping("{id}/editBook")
-	public String editBook(@PathVariable int id, Model model) {
+	public String editBook(
+		@PathVariable int id,
+		@AuthenticationPrincipal UserDetails user,
+		Model model) 
+	{
+		String username = user.getUsername();
+		model.addAttribute("username",username);
 		BookDto result = bookService.getTargetBookData(id);
 		BookDto response = result;
 		model.addAttribute("book", response);
