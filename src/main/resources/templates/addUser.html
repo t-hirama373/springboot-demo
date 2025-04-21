@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/css/addUser.css" />
+<title>新規登録</title>
+</head>
+<body>
+	<form th:action="@{/addUser}" method="post" class="form-signin" th:object="${user}">
+		<h3 class="form-signin-heading">新規登録</h3>
+		<hr class="colorgraph"><br>
+		<div th:if="${errorMessage}" class="message">
+		    <span th:text="${errorMessage}"></span>
+		</div>
+		<label for="username">ユーザー名:</label><br>
+		<input class="form-control" type="text" id="username" name="username">
+		<div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div><br>
+		<label for="password">パスワード:</label><br>
+		<input class="form-control" type="password" id="password" name="password">
+		<div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div><br>
+		<button class="btn btn-lg btn-primary btn-block form-control" type="submit" style="margin-bottom: 5%;">アカウント作成</button>
+	</form>
+	<div style="text-align: center;">
+		<a href="/login"><button class = "btn btn-link" >戻る</button></a>
+	</div>   
+	<script src="/js/jquery-3.7.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

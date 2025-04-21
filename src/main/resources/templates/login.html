@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>ログイン</title>
+</head>
+
+<style>
+	h4,p,a{
+		font-size: small;
+	}
+	.clmn{
+		display:inline-block;
+		margin-top:10px;
+		margin-bottom:10px;
+		width:200px
+	}
+	.form{
+		margin-top:10px;
+		margin-bottom:10px;
+		margin-left:10px;
+		width:200px;
+	}
+	#submitBtn1,#submitBtn2{
+		color:white; 
+	}
+	.btn-enabled{
+		background-color: black;
+		cursor: pointer;
+	}
+	.btn-disabled{
+		background-color: lightgray;
+	}	
+</style>
+
+<body>
+	<h4 style="margin-left: 25px; margin-bottom:50px;">書籍管理システム</h4>
+	<h1 style="margin-left: 250px">ログイン</h1>
+	<hr style="margin-left: 250px; width:850px">
+	<p style="margin-left: 250px;margin-bottom:25px">
+		登録情報を入力してください。
+	</p>
+	<div
+		th:if="${param.error}"
+		style="font-size:small; margin-left:250px; color:orangered">
+		アカウントまたはパスワードが不正です。
+	</div>
+	<div 
+		th:if="${param.logout}"
+		style="font-size:small; margin-left:250px; color:orangered">
+		ログアウトしました。
+	</div>
+	<div class="container" style="margin-left:250px">
+		<form th:action="@{/doLogin}" method="post">
+			<input
+				type="hidden"
+				th:name="${_csrf.parameterName}"
+				th:value="${_csrf.token}"
+			/>
+			<div style="display: flex;">
+				<p class="clmn">アカウント</p>
+				<input
+					class="form"
+					type="text"
+					id="username"
+					name="username"
+					required autofocus
+				/>
+			</div>
+			<div style="display: flex;">
+				<p class="clmn">パスワード</p>
+				<input
+					class="form"
+					type="password"
+					id="password"
+					name="password"
+					required
+				/>
+			</div>
+			<button
+				style="
+					border:none;
+					margin-top:20px;
+					margin-bottom:100px;
+					margin-left:210px;
+					width:75px;
+					height:30px"
+				type="submit"
+				id="submitBtn1"
+				class="btn-disabled"
+				disabled
+			>ログイン</button>
+			<!--
+			<p style="text-align: center;">
+				<a th:href="@{/addUser}">新規登録はこちら</a>
+			</p>
+			-->
+	    </form>
+	</div>
+	<hr style="margin-left: 250px; width:850px">
+	<p style="margin-left: 250px;margin-bottom:25px">
+		パスワードをお忘れの場合、登録アカウントへ再設定ページのURLを送信できます。
+	</p>
+	
+	<!--再設定URLの送信結果-->
+	<div id="result">
+		<a 
+			th:if="${success}"
+			th:text="${success}"
+			style="margin-left: 250px; color:green"></a>
+		<a 
+			th:if="${error}"
+			th:text="${error}"
+			style="margin-left: 250px; color:orangered"></a>
+	</div>	
+	<div class="container" style="margin-left:250px">
+		<form th:action="@{/login/sendAddress}" method="post">
+			<div style="display: flex;">
+				<p class="clmn">アカウント</p>
+				<input
+					class="form"
+					type="text"
+					id="sendAddress"
+					name="sendAddress"
+				/>
+			</div>
+			<button
+				style="
+					border:none;
+					margin-top:20px;
+					margin-left:210px;
+					width:75px;
+					height:30px"
+				type="submit"
+				id="submitBtn2"
+				class="btn-disabled"
+				disabled>送信</button>
+		</form>
+	</div>
+	
+	<script>	
+		//アカウントおよびパスワードの入力確認
+		const usernameInput = document.getElementById('username');
+		const passwordInput = document.getElementById('password');
+		const submitBtn1 = document.getElementById('submitBtn1');		
+		//ボタンの有効/無効を切替
+		function checkInputs() {
+			if(usernameInput.value.trim() !== ''
+				&& passwordInput.value.trim() !== ''
+			){
+				//空白以外を確認
+				submitBtn1.disabled = false;
+				submitBtn1.classList.remove('btn-disabled');
+				submitBtn1.classList.add('btn-enabled');
+			} else {
+				//空白を確認
+				submitBtn1.disabled = true;
+				submitBtn1.classList.remove('btn-enabled');
+				submitBtn1.classList.add('btn-disabled');
+			}
+		}	
+		//必須項目にリスナーを付与
+		usernameInput.addEventListener('input', checkInputs);
+		passwordInput.addEventListener('input', checkInputs);
+		
+		//送信先アドレスの入力確認
+		const sendAddressInput = document.getElementById('sendAddress');
+		const submitBtn2 = document.getElementById('submitBtn2');
+		//ボタンの有効/無効を切替
+		function checkInputs2() {
+			if(sendAddressInput.value.trim() !== ''){
+				//空白以外を確認
+				submitBtn2.disabled = false;
+				submitBtn2.classList.remove('btn-disabled');
+				submitBtn2.classList.add('btn-enabled');
+			} else {
+				//空白を確認
+				submitBtn2.disabled = true;
+				submitBtn2.classList.remove('btn-enabled');
+				submitBtn2.classList.add('btn-disabled');
+				}
+			}	
+		//必須項目にリスナーを付与
+		sendAddressInput.addEventListener('input', checkInputs2);
+	</script>
+	<script src="/js/jquery-3.7.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>
