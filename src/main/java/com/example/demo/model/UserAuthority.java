@@ -24,11 +24,17 @@ public class UserAuthority implements UserDetails {
     public String getPassword() {
         return user.getPassword();
     }
-
+    
     @Override
     public String getUsername() {
         return user.getUsername();
     }
+    
+    /*
+    public String getShelfName() {
+        return user.getShelfName();
+    }
+    */
     
     @Override
     public boolean isAccountNonExpired() {

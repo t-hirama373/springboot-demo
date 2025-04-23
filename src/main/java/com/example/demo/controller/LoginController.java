@@ -1,5 +1,10 @@
 package com.example.demo.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +42,7 @@ public class LoginController {
 		return "login";
 	}
 	
+	//パスワード再設定URL発行
 	@PostMapping("login/sendAddress")
 	public String sendAddress(
 		HttpServletRequest request,
@@ -44,11 +50,23 @@ public class LoginController {
 		RedirectAttributes redirectAttributes)
 	{
 		try {
+			//アカウント有
 			UserDetails user = userService.loadUserByUsername(sendAddress);
 			System.out.println(user.getUsername());
+			//ファイルの保存先を指定
+			String userHome = System.getProperty("user.home");
+			Path desktopPath = Path.of(userHome, "Desktop","reset_token.txt");
+			//リセットトークン発行
+			String token = UUID.randomUUID().toString();
+			String resetUrl = "http://localhost:8080/passwordSetting?token="+token;
+			Files.writeString(desktopPath,resetUrl);
+			userService.updateResetToken(user.getUsername(), token);
 			redirectAttributes.addFlashAttribute("success", "再設定用のURLを送信しました。");
 		} catch(UsernameNotFoundException e) {
+			//アカウント無
 			redirectAttributes.addFlashAttribute("error", "登録のないアドレスです。");
+		} catch(IOException e){
+			redirectAttributes.addFlashAttribute("error", "ファイル出力中にエラーが発生しました。");
 		}
 		return "redirect:/login";
 	}

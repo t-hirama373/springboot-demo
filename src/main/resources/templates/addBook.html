@@ -8,13 +8,13 @@
 
 <style>
 	h4,p,a{
+		color:black;
 		font-size: small;
 	}
 	.grid-container{
 		display: grid;
 		grid-template-columns: 200px 1fr;
 		gap: 20px;
-		margin-left: 250px;
 		margin-right: 100px;
 	}
 	.grid-item1{
@@ -83,89 +83,96 @@
 		書籍管理システム@<span th:text="${username}"></span>
 	</h4>
 	<a href="/bookList" style="margin-left: 25px;">書籍一覧へ戻る</a>
-	<h1 style="margin-left: 250px">新規登録</h1>
-	<hr style="margin-left: 250px; width:850px">
-	<p style="margin-left: 250px;margin-bottom:50px">
-		登録する書籍情報を入力してください。
-	</p>
 	
-	<form class="grid-container"
-		th:method="post" 
-		th:action="@{/bookList}" 
-		th:object="${book}" 
-		enctype="multipart/form-data"
-	>
-		<div class="grid-item1">
-			<div style="display:flex; flex-flow:column">
-				<!--ファイルの選択(非表示)-->
-				<input
-					type="file"
-					id="imageInput"
-					name="image"
-					style="display: none; cursor:pointer;"
-					onchange="previewImage(this)" />
-				<!--画像添付前のラベル表示-->
-				<label
-					id="imagePlaceholder"
-					for="imageInput"
-					class="book_img"
-					style="cursor:pointer;"
-				>	
-					image upload
-				</label>
-			</div>
+	<div style="position:absolute; top:100px; left:250px">
+		<h1>新規登録</h1>
+		<hr style="width:850px; margin-left:0px">
+		<div th:if="!${error}">
+			<p style="margin-bottom:50px">
+				登録する書籍情報を入力してください。
+			</p>
 		</div>
-		<div class="grid-item2">
-			<div style="display: flex;">
-				<p class="clmn">タイトル（必須）</p>
-				<input class="form1" type="text" id="title" name="title">
+		<div th:if="${error}">
+			<p th:text="${error}" style="margin-bottom:50px;color:orangered"></p>
+		</div>
+		<form class="grid-container"
+			th:method="post" 
+			th:action="@{/bookList}" 
+			th:object="${book}" 
+			enctype="multipart/form-data"
+		>
+			<div class="grid-item1">
+				<div style="display:flex; flex-flow:column">
+					<!--ファイルの選択(非表示)-->
+					<input
+						type="file"
+						id="imageInput"
+						name="image"
+						style="display: none; cursor:pointer;"
+						onchange="previewImage(this)" />
+					<!--画像添付前のラベル表示-->
+					<label
+						id="imagePlaceholder"
+						for="imageInput"
+						class="book_img"
+						style="cursor:pointer;"
+					>	
+						image upload
+					</label>
+				</div>
 			</div>
-			<div style="display: flex;">
-				<p class="clmn">著者（必須）</p>
-				<input class="form1" type="text" id="author" name="author">
-			</div>
-			<div style="display: flex;">
-				<p class="clmn">書籍概要</p>
-				<textarea type="text" name="detail"></textarea>
-			</div>
-			<div style="display: flex;">	
-				<p class="clmn">発行者</p>
-				<input class="form2" type="text" name="publiser">		
-				<p class="clmn">発行年</p>
-				<input
-					class="form2"
-					type="number" 
-					id="publiserYear" 
-					name="publiserYear" 
-					min="1900" max="2100"
-				>
-			</div>
-			<div style="display: flex;">
-				<p class="clmn">購入日（必須）</p>
-				<input
-					class="form2"
-					style="width:152px"
-					type="date"
-					id="purchaseDate"
-					name="purchaseDate"
-				>
-				<p class="clmn">カテゴリ（必須）</p>
-				<input class="form2" type="text" id="category" name="category">
-			</div>
-			<button
-				style="
-					border:none;
-					margin-top:20px;
-					margin-left:140px;
-					width:75px;
-					height:30px
-					"
-				type="submit"
-				id="submitBtn"
-				class="btn-disabled"
-				disabled>登録</button>
-		</div>		
-	</form>
+			<div class="grid-item2">
+				<div style="display: flex;">
+					<p class="clmn">タイトル（必須）</p>
+					<input class="form1" type="text" id="title" name="title">
+				</div>
+				<div style="display: flex;">
+					<p class="clmn">著者（必須）</p>
+					<input class="form1" type="text" id="author" name="author">
+				</div>
+				<div style="display: flex;">
+					<p class="clmn">書籍概要</p>
+					<textarea type="text" name="detail"></textarea>
+				</div>
+				<div style="display: flex;">	
+					<p class="clmn">発行者</p>
+					<input class="form2" type="text" name="publiser">		
+					<p class="clmn">発行年</p>
+					<input
+						class="form2"
+						type="number" 
+						id="publiserYear" 
+						name="publiserYear" 
+						min="1900" max="2100"
+					>
+				</div>
+				<div style="display: flex;">
+					<p class="clmn">購入日（必須）</p>
+					<input
+						class="form2"
+						style="width:152px"
+						type="date"
+						id="purchaseDate"
+						name="purchaseDate"
+					>
+					<p class="clmn">カテゴリ（必須）</p>
+					<input class="form2" type="text" id="category" name="category">
+				</div>
+				<button
+					style="
+						border:none;
+						margin-top:20px;
+						margin-left:140px;
+						width:75px;
+						height:30px"
+					type="submit"
+					id="submitBtn"
+					class="btn-disabled"
+					disabled>登録</button>
+			</div>		
+		</form>
+	</div>
+
 	<script>
 		const titleInput = document.getElementById('title');
 		const authorInput = document.getElementById('author');

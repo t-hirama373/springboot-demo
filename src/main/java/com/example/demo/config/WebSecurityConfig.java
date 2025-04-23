@@ -42,8 +42,9 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 					"/addUser",
 					"/css/**",
 					"/js/**",
-					"/error/**"
-				).permitAll()
+					"/error/**",
+					"/passwordSetting/**"
+				).permitAll()				
 				// 認証（ログイン）が必要なアクセス
 				.anyRequest().authenticated()
 	        )

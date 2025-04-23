@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,17 @@ public class BookService {
 	@Autowired
 	private BookRepository bookRepository;
 	
+	//一覧表示
+	@Transactional
+	public List<BookDto> getBookData() {							
+		return bookRepository.selectBookDataIdAsc();
+	}
+	
+	//画像一覧表示
+	public List<String> getBookImage() {
+		return bookRepository.selectImageBase64byAsc();
+	}
+	
 	//新規登録
 	@Transactional
 	public void addBookData(BookDto bookData) {
@@ -27,12 +39,28 @@ public class BookService {
 		bookRepository.insertBookData(bookData);
 	}
 	
+	//貸出処理
+	public void updateBookDateBorrowed(BookDto bookData) {
+		//現在時刻の取得
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		//貸出日に現在時刻を代入
+		bookData.setBorrowDate(timestamp);
+		//Repository処理実行
+		bookRepository.updateStatusToBorrowed(bookData);
+	}
+	
+	//返却処理
+	public void updateBookDateReturned(BookDto bookData) {
+		//Repository処理実行
+		bookRepository.updateStatusToReturned(bookData);
+	}
+	
 	@Transactional
 	//登録更新
 	public void updateBookData(BookDto bookData) {
 		//現在時刻の取得
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		//登録日と更新日に現在時刻を代入
+		//更新日に現在時刻を代入
 		bookData.setUpdateAt(timestamp);
 		//Repository処理実行
 		bookRepository.updateBookData(bookData);

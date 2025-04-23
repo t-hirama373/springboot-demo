@@ -8,13 +8,13 @@
 
 <style>
 	h4,p,a{
-			font-size: small;
+		color:black;
+		font-size: small;
 	}
 	.grid-container{
 		display: grid;
 		grid-template-columns: 200px 1fr;
 		gap: 20px;
-		margin-left: 250px;
 		margin-right: 100px;
 	}
 	.grid-item1{
@@ -83,123 +83,131 @@
 		書籍管理システム@<span th:text="${username}"></span>
 	</h4>	
 	<a href="/bookList" style="margin-left: 25px">書籍一覧へ戻る</a>
-	<h1 style="margin-left: 250px">登録更新</h1>
-	<hr style="margin-left: 250px; width:850px">
-	<p style="margin-left:250px;margin-bottom:50px">
-		更新する書籍情報を入力してください。
-	</p>
 	
-	<form class="grid-container" 
-		th:method="put"
-		th:action="@{/bookList/{id}(id=${id})}"
-		enctype="multipart/form-data"
-		th:object="${book}"
-	>
-		<div class="grid-item1">
-			<div style="display:flex; flex-flow:column">
-				<!--ファイルの選択(非表示)-->
-				<input
-					type="file"
-					id="imageInput"
-					name="image"
-					style="display: none"
-					onchange="previewImage(this)"
-				/>
-				<!--画像がある場合の表示-->
-				<img
-					th:if="${base64Image != null}"
-					th:src="'data:image/jpeg;base64,'+${base64Image}"
-					id="preview"
-					width="150"
-					style="cursor:pointer"
-					onclick="document.getElementById('imageInput').click()"
-				/>
-				<!--画像がない場合の表示-->
-				<label
-					th:if="${base64Image == null}"
-					id="imagePlaceholder"
-					for="imageInput"
-					class="book_img"
-					style="cursor:pointer;"
-				>
-					no image
-				</label>
-			</div>
+	<div style="position:absolute; top:100px; left:250px">
+		<h1>登録更新</h1>
+		<hr style="width:850px; margin-left:0px;">
+		<div th:if="!${error}">
+			<p style="margin-bottom:50px">
+				更新する書籍情報を入力してください。
+			</p>
 		</div>
-		<div class="grid-item2">
-			<div style="display: flex;">
-				<p class="clmn">タイトル（必須）</p>
-				<input class="form1"
-					type="text"
-					id="title"
-					name="title"
-					th:value="*{title}"
-				>
-			</div>
-			<div style="display: flex;">
-				<p class="clmn">著者（必須）</p>
-				<input class="form1"
-					type="text"
-					id="author"
-					name="author"
-					th:value="*{author}"
-				>
-			</div>
-			<div style="display: flex;">
-				<p class="clmn">書籍概要</p>
-				<textarea
-					type="text"
-					name="detail"
-					th:value="*{detail}"
-				></textarea>
-			</div>
-			<div style="display: flex;">
-				<p class="clmn">発行者</p>
-				<input class="form2"
-					type="text"
-					name="publiser"
-					th:value="*{publiser}"
-				>
-				<p class="clmn">発行年</p>
-				<input
-					class="form2"
-					type="number"
-					id="publiserYear"
-					name="publiserYear"
-					min="1900" max="2100"
-					th:value="*{publiserYear}"
-				>
-			</div>
-			<div style="display: flex;">
-				<p class="clmn">購入日（必須）</p>
-				<input class="form2"
-					type="date"
-					id="purchaseDate"
-					name="purchaseDate"
-					th:value="*{purchaseDate}"
-				>
-				<p class="clmn">カテゴリ（必須）</p>
-				<input class="form2"
-					type="text"
-					id="category"
-					name="category"
-					th:value="*{category}"
-				>
-			</div>
-			<button 
-				style="
-					border:none;
-					margin-top:20px;
-					margin-left:140px;
-					width:75px;
-					height:30px
-				"
-				type="submit"
-				id="submitBtn"
-				class="btn-disabled"
-				disabled>更新</button>
+		<div th:if="${error}">
+			<p th:text="${error}" style="margin-bottom:50px;color:orangered"></p>
 		</div>
-	</form>
+	
+		<form class="grid-container" 
+			th:method="put"
+			th:action="@{/bookList/{id}(id=${id})}"
+			enctype="multipart/form-data"
+			th:object="${book}"
+		>
+			<div class="grid-item1">
+				<div style="display:flex; flex-flow:column">
+					<!--ファイルの選択(非表示)-->
+					<input
+						type="file"
+						id="imageInput"
+						name="image"
+						style="display: none"
+						onchange="previewImage(this)"
+					/>
+					<!--画像がある場合の表示-->
+					<img
+						th:if="${base64Image != null}"
+						th:src="'data:image/jpeg;base64,'+${base64Image}"
+						id="preview"
+						width="150"
+						style="cursor:pointer"
+						onclick="document.getElementById('imageInput').click()"
+					/>
+					<!--画像がない場合の表示-->
+					<label
+						th:if="${base64Image == null}"
+						id="imagePlaceholder"
+						for="imageInput"
+						class="book_img"
+						style="cursor:pointer;"
+					>
+						no image
+					</label>
+				</div>
+			</div>
+			<div class="grid-item2">
+				<div style="display: flex;">
+					<p class="clmn">タイトル（必須）</p>
+					<input class="form1"
+						type="text"
+						id="title"
+						name="title"
+						th:value="*{title}"
+					>
+				</div>
+				<div style="display: flex;">
+					<p class="clmn">著者（必須）</p>
+					<input class="form1"
+						type="text"
+						id="author"
+						name="author"
+						th:value="*{author}"
+					>
+				</div>
+				<div style="display: flex;">
+					<p class="clmn">書籍概要</p>
+					<textarea
+						type="text"
+						id="datail"
+						name="detail"
+						th:text="*{detail}"
+					></textarea>
+				</div>
+				<div style="display: flex;">
+					<p class="clmn">発行者</p>
+					<input class="form2"
+						type="text"
+						name="publiser"
+						th:value="*{publiser}"
+					>
+					<p class="clmn">発行年</p>
+					<input
+						class="form2"
+						type="number"
+						id="publiserYear"
+						name="publiserYear"
+						min="1900" max="2100"
+						th:value="*{publiserYear}"
+					>
+				</div>
+				<div style="display: flex;">
+					<p class="clmn">購入日（必須）</p>
+					<input class="form2"
+						type="date"
+						id="purchaseDate"
+						name="purchaseDate"
+						th:value="*{purchaseDate}"
+					>
+					<p class="clmn">カテゴリ（必須）</p>
+					<input class="form2"
+						type="text"
+						id="category"
+						name="category"
+						th:value="*{category}"
+					>
+				</div>
+				<button 
+					style="
+						border:none;
+						margin-top:20px;
+						margin-left:140px;
+						width:75px;
+						height:30px"
+					type="submit"
+					id="submitBtn"
+					class="btn-disabled"
+					disabled>更新</button>
+			</div>
+		</form>
+	</div>
 	
 	<script>
 		const titleInput = document.getElementById('title');

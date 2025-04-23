@@ -14,8 +14,35 @@
 		insert into owner (username, password) values (#{username}, #{password})
 	</insert>
 	
+	<!-- パスワード変更 -->
 	<update id="updateUserData">
 		update owner set password = #{password} where username = #{username}
 	</update>
 	
+	<!-- リセットトークン保存 -->
+	<update id="resetTokenIssue">
+		update owner set 
+			reset_token = #{resetToken},
+			reset_token_expiration = #{resetTokenExpiration}
+			where username = #{username}
+	</update>
+	
+	<!-- リセットトークン取得 -->
+	<select id="selectResetToken">
+		select reset_token from owner where reset_token = #{resetToken}
+	</select>
+	
+	<!-- リセットトークン有効期限取得 -->
+	<select id="selectResetTokenExpiration">
+		select reset_token_expiration from owner where reset_token = #{resetToken}
+	</select>
+	
+	<!-- リセットトークンからパスワード変更 -->
+	<select id="updateUserDataByToken">
+		update owner set 
+			password = #{password},
+			reset_token = null,
+			reset_token_expiration = null
+			where reset_token = #{resetToken}
+	</select>
 </mapper>

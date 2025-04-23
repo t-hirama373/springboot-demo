@@ -2,6 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.repository.BookRepository">
 	
+	<!-- 書籍一覧表示 -->
+	<select id="selectBookDataIdAsc" resultType="com.example.demo.model.BookDto">
+		select
+			id,
+			title,
+			author,
+			detail,
+			publiser,
+			publiser_year,
+			to_char(purchase_date, 'yyyy-mm-dd') as purchaseDate,
+			category,
+			status
+			from book
+	</select>
+	
+	<!-- 画像一覧表示 -->
+	<select id="selectImageBase64byAsc">
+		select regexp_replace(
+			encode(book_image, 'base64'),E'[\\n\\r]', '', 'g'
+		)
+		from book
+	</select>
+	
 	<!-- 新規登録 -->
 	<insert id="insertBookData">
 		insert into book (
@@ -37,6 +60,26 @@
 		)
 	</insert>
 	
+	<!-- 貸出処理 -->
+	<update id="updateStatusToBorrowed">
+		update book set
+			status = 0,
+			borrow_date = cast(#{borrowDate} as timestamp),
+			username = #{username},
+			address = #{address}
+			where id= #{id}
+	</update>
+	
+	<!-- 返却処理 -->
+	<update id="updateStatusToReturned">
+		update book set
+			status = 1,
+			borrow_date = null,
+			username = null,
+			address = null
+			where id= #{id}
+	</update>
+	
 	<!-- 登録更新 -->
 	<update id="updateBookData">
 		update book set
@@ -47,7 +90,10 @@
 			detail = #{detail},
 			purchase_date = cast(#{purchaseDate} as timestamp),
 			category = #{category},
-			book_image = #{bookImage},
+			<!-- 画像がnullの場合は画像更新無効 -->
+			<if test="bookImage != null">
+				book_image = #{bookImage},
+			</if>
 			update_at = #{updateAt}
 			where id= #{id}
 	</update>
@@ -61,7 +107,11 @@
 			publiser,
 			publiser_year,
 			to_char(purchase_date, 'yyyy-mm-dd') as purchaseDate,
-			category
+			category,
+			status,
+			borrow_date,
+			username,
+			address
 			from book where id = #{id}
 	</select>
 	

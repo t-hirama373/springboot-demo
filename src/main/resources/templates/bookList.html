@@ -7,26 +7,230 @@
 	<title>書籍一覧</title>
 </head>
 
+<style>
+	h4,p,a{
+		color:black;
+		font-size: small;
+	}
+	.grid-container{
+		display: grid;
+		grid-template-columns: 150px 1fr;
+		gap: 20px;
+		margin-right: 100px;
+	}
+	.grid-item1{
+		margin-top:10px;
+		margin-bottom:30px;
+		justify-content: center;
+		background-color: #fff;
+	}
+	.grid-item2{
+		background-color: #fff;
+	}
+	.clmn{
+		display:inline-block;
+		margin-top:10px;
+		margin-bottom:10px;
+		width:200px
+	}
+	.form{
+		margin-top:10px;
+		margin-bottom:10px;
+		margin-left:10px;
+		width:200px;
+	}
+	#submitBtn{
+		color:white;
+		border:none;
+		width:50px;
+		height:25px
+	}
+	.btn-enabled{
+		color:white;
+		background-color: black;
+		cursor: pointer;
+	}
+	.btn-disabled{
+		background-color: lightgray;
+	}
+	.st-available{
+		margin-top:10px;
+		display:flex;
+		justify-content: center;
+		align-items:center;
+		font-size: 12px;
+		border-style: initial;
+		border: 1px solid;
+		width:55px;
+		height:25px;
+	}
+	.st-borrowed{
+		margin-top:10px;
+		display:flex;
+		justify-content: center;
+		align-items:center;
+		font-size: 12px;
+		border-style: initial;
+		color:white;
+		background-color:black;
+		width:55px;
+		height:25px;
+	}
+	.book_img{
+		display:flex;
+		justify-content: center;
+		align-items:center;
+		width:112px;
+		height:150px;
+		font-size: small;
+		color:black;
+		background-color:none;
+		border: dashed;
+		border-width: 1px;
+	}
+</style>
+
 <body>
-	<p>書籍管理システム@<span th:text="${username}"></span></p>
-	<form th:action="@{/logout}" method="post">
-		<button>
-			ログアウト
-		</button>	
-	</form>
-	<p></p>
-	<a href="/passwordSetting">パスワード設定</a>
-	<p></p>
-	<a href="/bookList/addBook">新規登録</a>
-	<h1>書籍一覧(管理者)</h1>
+	<h4 style="margin-left: 25px; margin-bottom:50px;">
+		書籍管理システム@<span th:text="${username}"></span>
+	</h4>
+	<!--パスワード設定-->
+	<div style="display:flex">
+		<a href="/passwordSetting" 
+		   style="margin-left:25px; margin-bottom:5px"
+		>パスワード設定</a>
+	</div>
+	<!--ログアウト-->
+	<div style="display:flex">
+		<form id="logout_bt" th:action="@{/logout}" method="post" style="display:none;">
+			<input type="hidden" name="${_csrf.paramerterName}" th:value="${_csrf.token}"/>
+		</form>
+		<a  href="#"
+			style="cursor:pointer; margin-left: 25px; margin-bottom:30px"
+			onclick="event.preventDefault(); document.getElementById('logout_bt').submit()"
+		>ログアウト</a>
+	</div>
+	<!--新規登録-->
+	<div style="display:flex">	
+		<a href="/bookList/addBook" style="margin-left: 25px; margin-bottom:10px">
+			新規登録
+		</a>
+	</div>	
+	<!--貸出履歴-->
+	<div style="display:flex">
+		<a href="/bookList/addBook" style="margin-left: 25px">
+			貸出履歴
+		</a>
+	</div>
+	<!--書籍一覧-->
+	<div style="position:absolute; top:100px; left:250px">
+		<h1>書籍一覧</h1>
+		<hr style="width:850px">
+		<div th:if="!${result}">
+			<p th:text="${count}" style="margin-bottom:50px"></p>
+		</div>
+		<div th:if="${result}">
+			<p th:text="${result}" style="margin-bottom:50px; color:green"></p>
+		</div>
+		<div th:if="${books != null and !books.isEmpty()}">
+			<div th:each="book:${books}">
+				<div class="grid-container">	
+					<div class="grid-item1">
+						<div style="display:flex; flex-flow:column">
+							<!--画像がある場合の表示-->
+							<img
+								th:if="${bookImage != null}"
+								th:src="'data:image/jpeg;base64,'+${getBookImage}"
+								id="preview"
+								width="112"
+							/>
+							<!--画像がない場合の表示-->
+							<label
+								th:if="${getBookImage == null}"
+								id="imagePlaceholder"
+								for="imageInput"
+								class="book_img"
+							>no image</label>
+						</div>
+					</div>
+					<div class="grid-item2">
+						
+						<div style="display: flex;">
+							<div th:if="${book.status == 1}" class="st-available">貸出可</div>
+							<div th:if="${book.status == 0}" class="st-borrowed">貸出中</div>
+						</div>
+						<p th:text="${book.category}"></p>
+						<p th:text="${book.title}"></p>
+						<button
+							type="submit"
+							id="submitBtn"
+							class="btn-enabled"
+							enabled>
+							<a style="
+								text-decoration: none;
+								color:white"
+								th:href="@{/bookList/{id}/manageBook(id=${book.id})}">管理</a>
+						</button>
+						<!--貸出可-->
+						<button th:if="${book.status == 1}"
+							type="submit"
+							id="submitBtn"
+							class="btn-enabled"
+						>
+							<a style="
+								text-decoration: none;
+								color:white"
+								th:href="@{/bookList/{id}/editBook(id=${book.id})}">更新</a>	
+						</button>
+						<button th:if="${book.status == 1}"
+								type="submit"
+								id="submitBtn"
+								class="btn-enabled"
+								desabled>削除</button>
+						<!--貸出中-->
+						<button th:if="${book.status == 0}"
+							type="submit"
+							id="submitBtn"
+							class="btn-disabled"
+						>更新</button>
+						<button th:if="${book.status == 0}"
+							type="submit"
+							id="submitBtn"
+							class="btn-disabled"
+						>削除</button>
+					</div>	
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
 	
-	<!--登録更新暫定リンク-->
-	<a href="/bookList/1/editBook">1</a>
-	<a href="/bookList/2/editBook">2</a>
-	<a href="/bookList/3/editBook">3</a>
-	<a href="/bookList/4/editBook">4</a>
-	<a href="/bookList/5/editBook">5</a>
-	
+	<script>
+		//アップロード画像を表示
+		function previewImage(input){
+			const file = input.files[0];
+			if(file){
+				const reader = new FileReader();
+				reader.onload = function(e){
+					const placeholder = document.getElementById('imagePlaceholder');
+					const existing = document.getElementById('preview');
+					if(existing){
+						existing.src = e.target.result;
+					} else if(placeholder){
+						const img = document.createElement('img');
+						img.id= 'preview';
+						img.src = e.target.result;
+						img.style.width = '100px';
+						img.style.cursor= 'pointer';
+						console.log(img.style.curser);
+						img.onclick = () => document.getElementById('imageInput').click();			
+						placeholder.replaceWith(img);
+					}
+				};
+				reader.readAsDataURL(file);
+			}
+		}
+	</script>			
 	<script src="/js/jquery-3.7.1.min"></script>
 	<script src="/js/bootstrap.min.js"></script>
 	

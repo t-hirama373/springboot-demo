@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.model.BookDto;
 import com.example.demo.service.BookService;
@@ -32,8 +34,14 @@ public class BookController {
 	public String bookList(
 		@AuthenticationPrincipal UserDetails user,
 		Model model) {
+		//アカウント名取得
 		String username = user.getUsername();
 		model.addAttribute("username",username);
+		//書籍情報取得
+		model.addAttribute("books", bookService.getBookData());
+		model.addAttribute("images", bookService.getBookImage());
+		//該当件数取得
+		model.addAttribute("count", "結果件数:"+bookService.getBookData().size());
 		return "bookList";
 	}
 	
@@ -44,30 +52,37 @@ public class BookController {
 		@ModelAttribute("book") BookDto bookDto,
 		Model model)
 	{
+		//アカウント名取得
 		String username = user.getUsername();
 		model.addAttribute("username",username);
+		
 		return "addBook";
 	}
 	
-	//新規登録
-	@PostMapping
-	public String addBookData(
-		@ModelAttribute("book") BookDto request,
-		@RequestParam("image") MultipartFile imageFile,
-		BindingResult result,
+	//貸出管理へ
+	@GetMapping("{id}/manageBook")
+	public String borrowBook(
+		@PathVariable int id,
+		@AuthenticationPrincipal UserDetails user,
 		Model model)
 	{
-		try {
-			if(!imageFile.isEmpty()) {
-				request.setBookImage(imageFile.getBytes());
-			}
-			bookService.addBookData(request);
-			return "redirect:/bookList";
-		} catch(IOException e) {
-			e.printStackTrace();
-			model.addAttribute("error", "画像の処理に失敗しました");
-			return "addBook";
+		//アカウント名取得
+		String username = user.getUsername();
+		model.addAttribute("username",username);
+		//書籍情報取得
+		BookDto result = bookService.getTargetBookData(id);
+		BookDto response = result;
+		model.addAttribute("book", response);
+		String base64Image = bookService.getImageBase64ById(id);
+		model.addAttribute("base64Image", base64Image);
+		if(base64Image != null) {
+			System.out.println("Base64="+base64Image.length());
 		}
+		//現在時刻取得
+		Timestamp now = new Timestamp(System.currentTimeMillis());
+		model.addAttribute("now",now);
+		
+		return "manageBook";
 	}
 	
 	//登録更新へ
@@ -77,8 +92,10 @@ public class BookController {
 		@AuthenticationPrincipal UserDetails user,
 		Model model) 
 	{
+		//アカウント名取得
 		String username = user.getUsername();
 		model.addAttribute("username",username);
+		//書籍情報取得
 		BookDto result = bookService.getTargetBookData(id);
 		BookDto response = result;
 		model.addAttribute("book", response);
@@ -88,7 +105,51 @@ public class BookController {
 		if(base64Image != null) {
 			System.out.println("Base64="+base64Image.length());
 		}
+		
 		return "editBook";
+	}
+	
+	//新規登録
+	@PostMapping
+	public String addBookData(
+		@ModelAttribute("book") BookDto request,
+		@RequestParam("image") MultipartFile imageFile,
+		BindingResult result,
+		RedirectAttributes redirect,
+		Model model)
+	{
+		try {
+			if(!imageFile.isEmpty()) {
+				request.setBookImage(imageFile.getBytes());
+			}
+			bookService.addBookData(request);
+			redirect.addFlashAttribute("result", "登録処理を行いました。");
+			return "redirect:/bookList";
+		} catch(IOException e) {
+			e.printStackTrace();
+			redirect.addFlashAttribute("error", "画像の処理に失敗しました。");
+		}
+		return "redirect:addBook";
+	}
+	
+	//貸出・返却処理
+	@PutMapping("{id}/manage")
+	public String borrowBook(
+		@PathVariable int id,
+		@ModelAttribute("book") BookDto request,
+		@RequestParam("statusBt") String status,
+		RedirectAttributes redirect,
+		Model model)
+	{
+		if(status.equals("borrow")) {
+			bookService.updateBookDateBorrowed(request);
+			redirect.addFlashAttribute("result", "貸出処理を行いました。");
+		}
+		if(status.equals("return")) {
+			bookService.updateBookDateReturned(request);
+			redirect.addFlashAttribute("result", "返却処理を行いました。");
+		}
+		return "redirect:/bookList";
 	}
 	
 	//登録更新
@@ -97,6 +158,7 @@ public class BookController {
 		@PathVariable int id,
 		@ModelAttribute("book") BookDto request,
 		@RequestParam("image") MultipartFile imageFile,
+		RedirectAttributes redirect,
 		Model model)
 	{
 		try {
@@ -104,11 +166,12 @@ public class BookController {
 				request.setBookImage(imageFile.getBytes());
 			}
 			bookService.updateBookData(request);
+			redirect.addFlashAttribute("result", "更新処理を行いました。");
 			return "redirect:/bookList";
 		} catch(IOException e) {
 			e.printStackTrace();
-			model.addAttribute("error", "画像の処理に失敗しました");
-			return "editBook";
+			redirect.addFlashAttribute("error", "画像の処理に失敗しました。");
 		}
+		return "redirect:/editBook";
 	}
 }
