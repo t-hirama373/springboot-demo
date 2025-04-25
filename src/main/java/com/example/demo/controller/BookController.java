@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.model.BookDto;
 import com.example.demo.service.BookService;
+import com.example.demo.service.HistoryService;
 
 @Controller
 @RequestMapping("/bookList")
@@ -28,20 +29,25 @@ public class BookController {
 	
 	@Autowired
 	private BookService bookService;
+	@Autowired
+	private HistoryService historyService;
 	
 	//書籍一覧
 	@GetMapping
 	public String bookList(
 		@AuthenticationPrincipal UserDetails user,
+		@RequestParam(required=false) Integer status,
 		Model model) {
 		//アカウント名取得
 		String username = user.getUsername();
 		model.addAttribute("username",username);
+		//条件：貸出状態
+		model.addAttribute("status", status);
 		//書籍情報取得
-		model.addAttribute("books", bookService.getBookData());
-		model.addAttribute("images", bookService.getBookImage());
+		model.addAttribute("books", bookService.getBookData(status));
 		//該当件数取得
-		model.addAttribute("count", "結果件数:"+bookService.getBookData().size());
+		model.addAttribute("count", "結果件数 : "+bookService.getBookData(status).size());
+		
 		return "bookList";
 	}
 	
@@ -57,6 +63,22 @@ public class BookController {
 		model.addAttribute("username",username);
 		
 		return "addBook";
+	}
+	
+	//貸出履歴へ
+	@GetMapping("history")
+	public String history(
+		@AuthenticationPrincipal UserDetails user,
+		Model model) {
+		//アカウント名取得
+		String username = user.getUsername();
+		model.addAttribute("username",username);
+		//書籍情報取得
+		model.addAttribute("history", historyService.getHistoryData());
+		//該当件数取得
+		model.addAttribute("count", "結果件数 : "+historyService.getHistoryData().size());
+		
+		return "history";
 	}
 	
 	//貸出管理へ
@@ -114,6 +136,7 @@ public class BookController {
 	public String addBookData(
 		@ModelAttribute("book") BookDto request,
 		@RequestParam("image") MultipartFile imageFile,
+		@RequestParam("title") String bookTitle,
 		BindingResult result,
 		RedirectAttributes redirect,
 		Model model)
@@ -123,7 +146,7 @@ public class BookController {
 				request.setBookImage(imageFile.getBytes());
 			}
 			bookService.addBookData(request);
-			redirect.addFlashAttribute("result", "登録処理を行いました。");
+			redirect.addFlashAttribute("result", "\""+bookTitle+"\"の登録処理を行いました。");
 			return "redirect:/bookList";
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -138,17 +161,25 @@ public class BookController {
 		@PathVariable int id,
 		@ModelAttribute("book") BookDto request,
 		@RequestParam("statusBt") String status,
+		@RequestParam("username") String username,
+		@RequestParam("address") String address,
+		@RequestParam("title") String bookTitle,
+		@RequestParam("id") int bookId,
 		RedirectAttributes redirect,
 		Model model)
 	{
+		String process = "";
 		if(status.equals("borrow")) {
 			bookService.updateBookDateBorrowed(request);
-			redirect.addFlashAttribute("result", "貸出処理を行いました。");
+			process = "貸出";
+			redirect.addFlashAttribute("result", "\""+bookTitle+"\"の貸出処理を行いました。");
 		}
 		if(status.equals("return")) {
 			bookService.updateBookDateReturned(request);
-			redirect.addFlashAttribute("result", "返却処理を行いました。");
+			process = "返却";
+			redirect.addFlashAttribute("result", "\""+bookTitle+"\"の返却処理を行いました。");
 		}
+		historyService.addProcessData(process, username, address, bookTitle, bookId);
 		return "redirect:/bookList";
 	}
 	
@@ -158,6 +189,7 @@ public class BookController {
 		@PathVariable int id,
 		@ModelAttribute("book") BookDto request,
 		@RequestParam("image") MultipartFile imageFile,
+		@RequestParam("title") String bookTitle,
 		RedirectAttributes redirect,
 		Model model)
 	{
@@ -166,12 +198,25 @@ public class BookController {
 				request.setBookImage(imageFile.getBytes());
 			}
 			bookService.updateBookData(request);
-			redirect.addFlashAttribute("result", "更新処理を行いました。");
+			redirect.addFlashAttribute("result", "\""+bookTitle+"\"の更新処理を行いました。");
 			return "redirect:/bookList";
 		} catch(IOException e) {
 			e.printStackTrace();
 			redirect.addFlashAttribute("error", "画像の処理に失敗しました。");
 		}
 		return "redirect:/editBook";
+	}
+	
+	//削除
+	@PostMapping("{id}/delete")
+	public String delete(
+		@PathVariable int id,
+		@RequestParam("title") String bookTitle,
+		RedirectAttributes redirect)
+	{
+		System.out.println(bookTitle);
+		bookService.deleteBookData(id);
+		redirect.addFlashAttribute("important", "\""+bookTitle+"\"の削除処理を行いました。");
+		return "redirect:/bookList"; 
 	}
 }

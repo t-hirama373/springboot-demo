@@ -9,14 +9,27 @@
 
 <style>
 	h4,p,a{
+		text-decoration: none;
 		color:black;
 		font-size: small;
+		border-bottom: 1px solid transparent;
+	}
+	a:hover{
+		border-bottom: 1px solid black;
+	}
+	select{
+		color:black;
+		font-size: small;
+		border:none;
+		cursor:pointer;
 	}
 	.grid-container{
 		display: grid;
 		grid-template-columns: 150px 1fr;
 		gap: 20px;
+		height:150px;
 		margin-right: 100px;
+		margin-bottom: 50px;
 	}
 	.grid-item1{
 		margin-top:10px;
@@ -26,32 +39,6 @@
 	}
 	.grid-item2{
 		background-color: #fff;
-	}
-	.clmn{
-		display:inline-block;
-		margin-top:10px;
-		margin-bottom:10px;
-		width:200px
-	}
-	.form{
-		margin-top:10px;
-		margin-bottom:10px;
-		margin-left:10px;
-		width:200px;
-	}
-	#submitBtn{
-		color:white;
-		border:none;
-		width:50px;
-		height:25px
-	}
-	.btn-enabled{
-		color:white;
-		background-color: black;
-		cursor: pointer;
-	}
-	.btn-disabled{
-		background-color: lightgray;
 	}
 	.st-available{
 		margin-top:10px;
@@ -80,13 +67,28 @@
 		display:flex;
 		justify-content: center;
 		align-items:center;
-		width:112px;
-		height:150px;
+		width:100px;
+		height:141px;
 		font-size: small;
-		color:black;
+		color:#bbb;
 		background-color:none;
-		border: dashed;
+		border: dashed #bbb;
 		border-width: 1px;
+	}
+	.bt-active{
+		color:#000;
+		background:none;
+		border:none;
+		margin-right:10px;
+	}
+	.bt-active:hover{
+		border-bottom: 1px solid #000;
+	}
+	.bt-non-active{
+		color:#bbb;
+		background:none;
+		border:none;
+		margin-right:10px;
 	}
 </style>
 
@@ -96,7 +98,7 @@
 	</h4>
 	<!--パスワード設定-->
 	<div style="display:flex">
-		<a href="/passwordSetting" 
+		<a href="/passwordSetting"
 		   style="margin-left:25px; margin-bottom:5px"
 		>パスワード設定</a>
 	</div>
@@ -118,119 +120,109 @@
 	</div>	
 	<!--貸出履歴-->
 	<div style="display:flex">
-		<a href="/bookList/addBook" style="margin-left: 25px">
+		<a href="/bookList/history" style="margin-left: 25px">
 			貸出履歴
 		</a>
 	</div>
-	<!--書籍一覧-->
+	<!--見出-->
 	<div style="position:absolute; top:100px; left:250px">
-		<h1>書籍一覧</h1>
+		<div style="display:flex; align-items: baseline; margin-bottom:-8px">
+			<h1 style="margin-right:100px">書籍一覧</h1>
+			<!--状態プルダウン-->
+			<form th:action="@{/bookList}" method="get" id="filterForm">
+				<select name="status" id="statusSelect" th:onchange="this.form.submit()" style="margin-right:50px">
+					<option value="">すべて</option>
+					<option value="1" th:selected="${status==1}">貸出可</option>
+					<option value="0" th:selected="${status==0}">貸出中</option>
+				</select>
+			</form>
+			<!--並順プルダウン-->
+			<form th:action="@{/bookList}" method="get" id="sortForm">
+				<select name="sort" id="sortSelect" th:onchange="this.form.submit()">
+					<option value="title" th:selected="${sort=='title'}">タイトル順</option>
+					<option value="publiserYear" th:selected="${sort=='publiserYear'}">発行年順</option>
+				</select>
+			</form>
+		</div>
 		<hr style="width:850px">
 		<div th:if="!${result}">
-			<p th:text="${count}" style="margin-bottom:50px"></p>
+			<div th:if="!${important}">
+				
+				<p th:text="${count}" style="margin-bottom:50px"></p>
+			</div>	
 		</div>
 		<div th:if="${result}">
 			<p th:text="${result}" style="margin-bottom:50px; color:green"></p>
 		</div>
+		<div th:if="${important}">
+			<p th:text="${important}" style="margin-bottom:50px; color:orangered"></p>
+		</div>
+		<!--書籍一覧-->
 		<div th:if="${books != null and !books.isEmpty()}">
-			<div th:each="book:${books}">
-				<div class="grid-container">	
-					<div class="grid-item1">
-						<div style="display:flex; flex-flow:column">
-							<!--画像がある場合の表示-->
-							<img
-								th:if="${bookImage != null}"
-								th:src="'data:image/jpeg;base64,'+${getBookImage}"
-								id="preview"
-								width="112"
-							/>
-							<!--画像がない場合の表示-->
-							<label
-								th:if="${getBookImage == null}"
-								id="imagePlaceholder"
-								for="imageInput"
-								class="book_img"
-							>no image</label>
+			<div th:each="book : ${books}" div class="grid-container">
+				<!--書籍画像-->
+				<div class="grid-item1">
+					<!--画像あり-->
+					<img
+						th:if="${book.bookImageStr != null}"
+						th:src="'data:image/jpeg;base64,'+${book.bookImageStr}"
+						style="border: #bbb solid 1px;"
+						width="100">
+					<!--画像なし-->
+					<label
+						th:if="${book.bookImageStr == null}"
+						class="book_img"
+					>no image</label>
+				</div>
+				<!--情報表示-->
+				<div class="grid-item2" >
+					<div style="display: flex;">
+						<div th:if="${book.status == 1}" class="st-available">貸出可</div>
+						<div th:if="${book.status == 0}" class="st-borrowed">貸出中</div>
+					</div>
+					<p th:text="'#'+${book.category}"></p>
+					<p th:text="${book.title}"></p>
+					<p style="margin-top:-6px; margin-bottom:0px">
+						-----------------------------------------
+					</p>
+					<!--機能-->
+					<div style="display: flex;">
+						<!--管理-->
+						<form th:action="@{/bookList/{id}/manageBook(id=${book.id})}"
+							method="get" style="display: inline"
+						>
+							<button class="bt-active">&#x21C4; 管理</button>
+						</form>
+						
+						<!--貸出可-->
+						<div th:if="${book.status == 1}">
+							<!--編集-->
+							<form  th:action="@{/bookList/{id}/editBook(id=${book.id})}"
+								method="get" style="display: inline"
+							>
+								<button class="bt-active">&#x270E; 編集</button>
+							</form>	
+							<!--削除-->
+							<form  th:action="@{/bookList/{id}/delete(id=${book.id})}"
+								method="post" style="display: inline"
+							>
+								<input type="hidden" name="title" th:value="${book.title}"/>
+								<button class="bt-active">&#x00D7; 削除</button>
+							</form>	
+						</div>
+						<!--貸出中-->
+						<div th:if="${book.status == 0}">
+							<!--更新-->
+							<button class="bt-non-active">&#x270E; 編集</button>	
+							<!--削除-->
+							<button class="bt-non-active">&#x00D7; 削除</button>
 						</div>
 					</div>
-					<div class="grid-item2">
-						
-						<div style="display: flex;">
-							<div th:if="${book.status == 1}" class="st-available">貸出可</div>
-							<div th:if="${book.status == 0}" class="st-borrowed">貸出中</div>
-						</div>
-						<p th:text="${book.category}"></p>
-						<p th:text="${book.title}"></p>
-						<button
-							type="submit"
-							id="submitBtn"
-							class="btn-enabled"
-							enabled>
-							<a style="
-								text-decoration: none;
-								color:white"
-								th:href="@{/bookList/{id}/manageBook(id=${book.id})}">管理</a>
-						</button>
-						<!--貸出可-->
-						<button th:if="${book.status == 1}"
-							type="submit"
-							id="submitBtn"
-							class="btn-enabled"
-						>
-							<a style="
-								text-decoration: none;
-								color:white"
-								th:href="@{/bookList/{id}/editBook(id=${book.id})}">更新</a>	
-						</button>
-						<button th:if="${book.status == 1}"
-								type="submit"
-								id="submitBtn"
-								class="btn-enabled"
-								desabled>削除</button>
-						<!--貸出中-->
-						<button th:if="${book.status == 0}"
-							type="submit"
-							id="submitBtn"
-							class="btn-disabled"
-						>更新</button>
-						<button th:if="${book.status == 0}"
-							type="submit"
-							id="submitBtn"
-							class="btn-disabled"
-						>削除</button>
-					</div>	
-				</div>
-			</div>
+				</div>	
+			</div>	
 		</div>
 	</div>
-	</div>
-	
-	<script>
-		//アップロード画像を表示
-		function previewImage(input){
-			const file = input.files[0];
-			if(file){
-				const reader = new FileReader();
-				reader.onload = function(e){
-					const placeholder = document.getElementById('imagePlaceholder');
-					const existing = document.getElementById('preview');
-					if(existing){
-						existing.src = e.target.result;
-					} else if(placeholder){
-						const img = document.createElement('img');
-						img.id= 'preview';
-						img.src = e.target.result;
-						img.style.width = '100px';
-						img.style.cursor= 'pointer';
-						console.log(img.style.curser);
-						img.onclick = () => document.getElementById('imageInput').click();			
-						placeholder.replaceWith(img);
-					}
-				};
-				reader.readAsDataURL(file);
-			}
-		}
-	</script>			
+			
 	<script src="/js/jquery-3.7.1.min"></script>
 	<script src="/js/bootstrap.min.js"></script>
 	

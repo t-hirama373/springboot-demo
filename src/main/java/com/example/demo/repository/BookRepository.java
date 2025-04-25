@@ -11,11 +11,8 @@ import com.example.demo.model.BookDto;
 @Mapper
 public interface BookRepository {
 	
-	//書籍一覧を取得する(ID昇順)
-	List<BookDto>selectBookDataIdAsc();
-	
-	//画像一覧を取得する(ID昇順)
-	List<String>selectImageBase64byAsc();
+	//書籍一覧を取得する
+	List<BookDto>selectBookData(Integer status);
 	
 	//新規登録
 	void insertBookData(BookDto bookData);
@@ -34,4 +31,7 @@ public interface BookRepository {
 	
 	//書籍IDから画像を取得
 	String findImageBase64ById(int id);
+	
+	//登録削除
+	void deleteBookData(int id);
 }

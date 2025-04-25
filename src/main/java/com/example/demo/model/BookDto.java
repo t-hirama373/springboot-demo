@@ -17,16 +17,18 @@ public class BookDto {
 	private String author;
 	//発行者
 	private String publiser; 
-	//発行年
-	private int publiserYear;
+	//発行年(null対応=Integer)
+	private Integer publiserYear;
 	//書籍説明
 	private String detail;
 	//購入日
 	private String purchaseDate;
 	//書籍カテゴリ
 	private String category;
-	//書籍イメージ
+	//書籍イメージ（登録）
 	private byte[] bookImage;
+	//書籍イメージ（取得）
+	private String bookImageStr;
 	//登録日
 	private Timestamp createdAt;
 	//更新日

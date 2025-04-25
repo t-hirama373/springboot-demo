@@ -18,13 +18,8 @@ public class BookService {
 	
 	//一覧表示
 	@Transactional
-	public List<BookDto> getBookData() {							
-		return bookRepository.selectBookDataIdAsc();
-	}
-	
-	//画像一覧表示
-	public List<String> getBookImage() {
-		return bookRepository.selectImageBase64byAsc();
+	public List<BookDto> getBookData(Integer status) {							
+		return bookRepository.selectBookData(status);
 	}
 	
 	//新規登録
@@ -75,5 +70,11 @@ public class BookService {
 	//書籍IDから画像取得
 	public String getImageBase64ById(int id) {
 		return bookRepository.findImageBase64ById(id);
+	}
+	
+	//削除
+	@Transactional
+	public void deleteBookData(int id) {
+		bookRepository.deleteBookData(id);
 	}
 }

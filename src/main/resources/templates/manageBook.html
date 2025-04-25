@@ -8,8 +8,13 @@
 
 <style>
 	h4,p,a{
+		text-decoration: none;
 		color:black;
 		font-size: small;
+		border-bottom: 1px solid transparent;
+	}
+	a:hover{
+		border-bottom: 1px solid black;
 	}
 	.caption{
 		font-size:x-small;
@@ -18,7 +23,7 @@
 	}
 	.grid-container{
 		display: grid;
-		grid-template-columns: 150px 250px 1fr;
+		grid-template-columns: 200px 250px 1fr;
 		gap: 20px;
 		margin-right: 100px;
 	}
@@ -66,18 +71,18 @@
 		display:flex;
 		justify-content: center;
 		align-items:center;
-		width:112px;
-		height:150px;
+		width:150px;
+		height:211px;
 		font-size: small;
-		color:black;
+		color:#bbb;
 		background-color:none;
-		border: dashed;
+		border: dashed #bbb;
 		border-width: 1px;
 		cursor:pointer; 
 	}
 	.st-available{
 		margin-top:10px;
-		margin-bottom:10px;
+		margin-bottom:50px;
 		display:flex;
 		justify-content: center;
 		align-items:center;
@@ -89,7 +94,7 @@
 	}
 	.st-borrowed{
 		margin-top:10px;
-		margin-bottom:10px;
+		margin-bottom:50px;
 		display:flex;
 		justify-content: center;
 		align-items:center;
@@ -109,192 +114,150 @@
 	<a href="/bookList" style="margin-left: 25px">書籍一覧へ戻る</a>
 	
 	<div style="position:absolute; top:100px; left:250px">
-			<h1>貸出管理</h1>
-			<hr style="width:850px; margin-left:0px;">
-			<p style="margin-bottom:50px">
-				以下の書籍の貸出管理を行います。
-			</p>
-			<form class="grid-container" 
-				th:method="put"
-				th:action="@{/bookList/{id}/manage(id=${id})}"
-				enctype="multipart/form-data"
-				th:object="${book}"
-			>
-				<div class="grid-item1">
-					<div style="display:flex; flex-flow:column">
-						<!--画像がある場合の表示-->
-						<img
-							th:if="${base64Image != null}"
-							th:src="'data:image/jpeg;base64,'+${base64Image}"
-							id="preview"
-							width="112"
-						/>
-						<!--画像がない場合の表示-->
-						<label
-							th:if="${base64Image == null}"
-							id="imagePlaceholder"
-							for="imageInput"
-							class="book_img"
-						>no image</label>
-					</div>
+		<h1>貸出管理</h1>
+		<hr style="width:850px; margin-left:0px;">
+		<p style="margin-bottom:50px">
+			以下の書籍の貸出管理を行います。
+		</p>
+		<form class="grid-container" 
+			th:method="put"
+			th:action="@{/bookList/{id}/manage(id=${id})}"
+			enctype="multipart/form-data"
+			th:object="${book}"
+		>
+			<div class="grid-item1">
+				<div style="display:flex; flex-flow:column">
+					<!--画像がある場合の表示-->
+					<img
+						th:if="${base64Image != null}"
+						th:src="'data:image/jpeg;base64,'+${base64Image}"
+						style="border:1px solid #bbb"
+						width="150"
+					/>
+					<!--画像がない場合の表示-->
+					<label
+						th:if="${base64Image == null}"
+						id="imagePlaceholder"
+						for="imageInput"
+						class="book_img">no image</label>
 				</div>
+			</div>
 				
-				<div class="grid-item2">
-					<div style="display: flex;">
-						<div th:if="${book.status == 1}" class="st-available">貸出可</div>
-						<div th:if="${book.status == 0}" class="st-borrowed">貸出中</div>
-					</div>
-					<div style="display: flex;">
-						<p style="width:250px" th:text="*{category}"></p>
-					</div>
-					<div style="display: flex;">
-						<p style="width:250px" th:text="*{title}"></p>
-					</div>
+			<div class="grid-item2">
+				<div style="display: flex;">
+					<div th:if="${book.status == 1}" class="st-available">貸出可</div>
+					<div th:if="${book.status == 0}" class="st-borrowed">貸出中</div>
 				</div>
+				<div style="display: flex;">
+					<p style="width:250px" th:text="'#'+${book.category}"></p>
+				</div>
+				<div style="display: flex;">
+					<p style="width:250px" th:text="${book.title}"></p>
+					<!--取得用隠しinput-->
+					<input type="hidden" name="id" th:value="${book.id}"/>
+					<input type="hidden" name="title" th:value="${book.title}"/>
+				</div>
+			</div>
 				
-				<div class="grid-item3">
-					<!--貸出可-->
-					<div th:if="${book.status == 1}">
-						<p style="margin-left:10px; margin-bottom:60px">
-							利用者の情報を入力してください。
-						</p>
+			<div class="grid-item3">
+				<!--貸出可-->
+				<div th:if="${book.status == 1}">
+					<p style="margin-left:10px; margin-bottom:60px">
+						利用者の情報を入力してください。
+					</p>
+					<div style="display: flex;">
+						<p class="clmn">氏名</p>
+						<input class="form"
+							type="text"
+							id="username"
+							name="username">
 					</div>
-					
-					<!--貸出中-->
-					<div th:if="${book.status == 0}">
-						<p style="margin-left:10px; margin-bottom:60px">
-							以下の利用者に貸出中です。
-						</p>
-					</div>						
-					
-					<!--貸出可-->
-					<div th:if="${book.status == 1}">													
-						<div style="display: flex;">
-							<p class="clmn">氏名</p>
-							<input class="form"
-								type="text"
-								id="username"
-								name="username"
-								th:value="*{username}"
-							>
-						</div>
-						<div style="display: flex;">
-							<p class="clmn">メール（任意）</p>
-							<input class="form"
-								type="text"
-								id="address"
-								name="address"
-								th:value="*{address}"
-							>
-						</div>
+					<div style="display: flex;">
+						<p class="clmn">メール（任意）</p>
+						<input class="form"
+							type="text"
+							id="address"
+							name="address">
 					</div>
-					
-					<!--貸出中-->
-					<div th:if="${book.status == 0}">													
-						<div style="display: flex;">
-							<p class="clmn">氏名</p>
-							<p  class="clmn"
-								type="text"
-								id="username"
-								name="username"
-								th:text="*{username}"
-							>
-						</div>
-						<div style="display: flex;">
-							<p class="clmn">メール（任意）</p>
-							<p  class="clmn"
-								type="text"
-								id="address"
-								name="address"
-								th:text="*{address}"
-							>
-						</div>
-					</div>
-										
 					<div style="display: flex;">
 						<p class="clmn">貸出日時</p>
-						<!--貸出可-->
 						<div  th:if="${book.status == 1}">
 							<p class="clmn" th:text="${#strings.substring(now,0,16)}" style="margin-left:10px"></p>
 							<p class="caption">※現在日時が登録されます</p>
 						</div>
-						<!--貸出中-->
-						<div th:if="${book.status == 0}">
-							<p class="clmn" th:text="*{#strings.substring(borrowDate,0,16)}" style="margin-left:10px"></p>
-							<p class="caption">※貸出処理日時</p>
-						</div>
 					</div>
-					<!--貸出可-->
-					<button
-						th:if="${book.status == 1}"
+					<button 
 						type="submit"
 						id="submitBtn"
 						name="statusBt"
 						value="borrow"
 						class="btn-disabled"
 						disabled>貸出</button>
-					<!--貸出中-->
+				</div>	
+				<!--貸出中-->
+				<div th:if="${book.status == 0}">
+					<p style="margin-left:10px; margin-bottom:60px">
+						以下の利用者に貸出中です。
+					</p>						
+					<div style="display: flex;">
+						<p class="clmn">氏名</p>
+						<p  class="clmn"
+							type="text"
+							id="username"
+							th:text="${book.username}"></p>
+						<!--取得用隠しinput-->
+						<input type="hidden" name="username" th:value="${book.username}"/>	
+					</div>
+					<div style="display: flex;">
+						<p class="clmn">メール（任意</p>
+						<p  class="clmn"
+							type="text"
+							id="address"
+							th:text="${book.address}"></p>
+						<!--取得用隠しinput-->
+						<input type="hidden" name="address" th:value="${book.address}"/>	
+					</div>				
+					<div style="display: flex;">
+						<p class="clmn">貸出日時</p>
+						<div th:if="${book.status == 0}">
+							<p class="clmn" th:text="${#strings.substring(book.borrowDate,0,16)}" style="margin-left:10px"></p>
+							<p class="caption">※貸出処理日時</p>
+						</div>
+					</div>
 					<button
-						th:if="${book.status == 0}"
 						type="submit"
 						id="submitBtn"
 						name="statusBt"
 						value="return"
 						class="btn-enabled"
 						enabled>返却</button>
-					
 				</div>
-			</form>
-		</div>
+			</div>
+		</form>
+	</div>
 		
-		<script>
-			const usernameInput = document.getElementById('username');
-			const submitBtn = document.getElementById('submitBtn');
+	<script>
+		const usernameInput = document.getElementById('username');
+		const submitBtn = document.getElementById('submitBtn');
 			
-			//ボタンの有効/無効を切替
-			function checkInputs() {
-				//利用者氏名の入力確認
-				if(usernameInput.value.trim() !== ''){
-					//入力を確認
-					submitBtn.disabled = false;
-					submitBtn.classList.remove('btn-disabled');
-					submitBtn.classList.add('btn-enabled');
-				} else {
-					//空白を確認
-					submitBtn.disabled = true;
-					submitBtn.classList.remove('btn-enabled');
-					submitBtn.classList.add('btn-disabled');
-				}
+		//ボタンの有効/無効を切替
+		function checkInputs() {
+			//利用者氏名の入力確認
+			if(usernameInput.value.trim() !== ''){
+				//入力を確認
+				submitBtn.disabled = false;
+				submitBtn.classList.remove('btn-disabled');
+				submitBtn.classList.add('btn-enabled');
+			} else {
+				//空白を確認
+				submitBtn.disabled = true;
+				submitBtn.classList.remove('btn-enabled');
+				submitBtn.classList.add('btn-disabled');
 			}
-			
-			//必須項目にリスナーを付与
-			usernameInput.addEventListener('input', checkInputs);
-			
-			//アップロード画像を表示
-			function previewImage(input){
-				const file = input.files[0];
-				if(file){
-					const reader = new FileReader();
-					reader.onload = function(e){
-						const placeholder = document.getElementById('imagePlaceholder');
-						const existing = document.getElementById('preview');
-						if(existing){
-							existing.src = e.target.result;
-						} else if(placeholder){
-							const img = document.createElement('img');
-							img.id= 'preview';
-							img.src = e.target.result;
-							img.style.width = '100px';
-							img.style.cursor= 'pointer';
-							console.log(img.style.curser);
-							img.onclick = () => document.getElementById('imageInput').click();			
-							placeholder.replaceWith(img);
-						}
-					};
-					reader.readAsDataURL(file);
-				}
-			}
-		</script>
+		}
+		//必須項目にリスナーを付与
+		usernameInput.addEventListener('input', checkInputs);
+	</script>
 				
 	<script src="/js/jquery-3.7.1.min"></script>
 	<script src="/js/bootstrap.min.js"></script>

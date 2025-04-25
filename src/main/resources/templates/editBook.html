@@ -3,13 +3,18 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>登録更新</title>
+	<title>登録編集</title>
 </head>
 
 <style>
 	h4,p,a{
+		text-decoration: none;
 		color:black;
 		font-size: small;
+		border-bottom: 1px solid transparent;
+	}
+	a:hover{
+		border-bottom: 1px solid black;
 	}
 	.grid-container{
 		display: grid;
@@ -45,12 +50,18 @@
 		margin-right:30px;
 		width:150px
 	}
+	input[type=number]::-webkit-inner-spin-button,
+	input[type=number]::-webkit-inner-spin-button{
+		-webkit-appearance: none;
+		margin:0;
+	}
 	textarea{
 		margin-top:10px;
 		margin-bottom:10px;
 		margin-left:10px;
 		width:480px;
 		height:75px;
+		font-family: inherit;
 		resize:none;
 	}
 	#submitBtn{
@@ -68,11 +79,11 @@
 		justify-content: center;
 		align-items:center;
 		width:150px;
-		height:200px;
+		height:211px;
 		font-size: small;
-		color:black;
+		color:#bbb;
 		background-color:none;
-		border: dashed;
+		border: dashed #bbb;
 		border-width: 1px;
 		cursor:pointer; 
 	}
@@ -85,11 +96,11 @@
 	<a href="/bookList" style="margin-left: 25px">書籍一覧へ戻る</a>
 	
 	<div style="position:absolute; top:100px; left:250px">
-		<h1>登録更新</h1>
+		<h1>登録編集</h1>
 		<hr style="width:850px; margin-left:0px;">
 		<div th:if="!${error}">
 			<p style="margin-bottom:50px">
-				更新する書籍情報を入力してください。
+				編集する書籍情報を入力してください。
 			</p>
 		</div>
 		<div th:if="${error}">
@@ -97,6 +108,7 @@
 		</div>
 	
 		<form class="grid-container" 
+			id="updateBt"
 			th:method="put"
 			th:action="@{/bookList/{id}(id=${id})}"
 			enctype="multipart/form-data"
@@ -129,7 +141,7 @@
 						class="book_img"
 						style="cursor:pointer;"
 					>
-						no image
+						image upload
 					</label>
 				</div>
 			</div>
@@ -168,7 +180,7 @@
 						name="publiser"
 						th:value="*{publiser}"
 					>
-					<p class="clmn">発行年</p>
+					<p class="clmn">発行年（必須）</p>
 					<input
 						class="form2"
 						type="number"
@@ -179,8 +191,9 @@
 					>
 				</div>
 				<div style="display: flex;">
-					<p class="clmn">購入日（必須）</p>
+					<p class="clmn">購入日</p>
 					<input class="form2"
+						style="width:153px"
 						type="date"
 						id="purchaseDate"
 						name="purchaseDate"
@@ -210,36 +223,49 @@
 	</div>
 	
 	<script>
+		const form = document.getElementById('updateBt')
 		const titleInput = document.getElementById('title');
 		const authorInput = document.getElementById('author');
-		const purchaseDateInput = document.getElementById('purchaseDate');
+		const publiserYearInput = document.getElementById('publiserYear');
 		const categoryInput = document.getElementById('category');
 		const submitBtn = document.getElementById('submitBtn');
 		
+		const initialData = new FormData(form);
+		
 		//ボタンの有効/無効を切替
-		function checkInputs() {
+		function validateForm() {
+			
+			const currentData = new FormData(form); 
+			
 			//タイトル、著者、購入日、カテゴリの入力確認
-			if(titleInput.value.trim() !== ''
-				&& authorInput.value.trim() !== ''
-				&& purchaseDateInput.value.trim() !== ''
-				&& categoryInput.value.trim() !== ''
+			if(!titleInput.value.trim() ||
+			   !authorInput.value.trim() ||
+			   !publiserYearInput.value.trim() ||
+			   !categoryInput.value.trim()
 			){
-				//空白以外を確認
-				submitBtn.disabled = false;
-				submitBtn.classList.remove('btn-disabled');
-				submitBtn.classList.add('btn-enabled');
-			} else {
 				//空白を確認
 				submitBtn.disabled = true;
 				submitBtn.classList.remove('btn-enabled');
 				submitBtn.classList.add('btn-disabled');
+				return;
+			} 
+			//入力値の変更を検知
+			for(let [key, value] of currentData.entries()){
+				if(initialData.get(key) !== value){
+					submitBtn.disabled = false;
+					submitBtn.classList.remove('btn-disabled');
+					submitBtn.classList.add('btn-enabled');
+					return;
+				}
 			}
+			submitBtn.disabled = true;
 		}
 		
 		//必須項目にリスナーを付与
+		form.addEventListener('input', validateForm);
 		titleInput.addEventListener('input', checkInputs);
 		authorInput.addEventListener('input', checkInputs);
-		purchaseDateInput.addEventListener('input', checkInputs);
+		publiserYearInput.addEventListener('input', checkInputs);
 		categoryInput.addEventListener('input', checkInputs);
 		
 		//アップロード画像を表示
@@ -257,6 +283,7 @@
 						img.id= 'preview';
 						img.src = e.target.result;
 						img.style.width = '150px';
+						img.style.border= '1px solid #bbb';
 						img.style.cursor= 'pointer';
 						console.log(img.style.curser);
 						img.onclick = () => document.getElementById('imageInput').click();			

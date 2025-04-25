@@ -8,8 +8,13 @@
 
 <style>
 	h4,p,a{
+		text-decoration: none;
 		color:black;
 		font-size: small;
+		border-bottom: 1px solid transparent;
+	}
+	a:hover{
+		border-bottom: 1px solid black;
 	}
 	.grid-container{
 		display: grid;
@@ -45,12 +50,18 @@
 		margin-right:30px;
 		width:150px
 	}
+	input[type=number]::-webkit-inner-spin-button,
+	input[type=number]::-webkit-inner-spin-button{
+		-webkit-appearance: none;
+		margin:0;
+	}
 	textarea{
 		margin-top:10px;
 		margin-bottom:10px;
 		margin-left:10px;
 		width:480px;
 		height:75px;
+		font-family: inherit;
 		resize:none;
 	}
 	#submitBtn{
@@ -68,11 +79,11 @@
 		justify-content: center;
 		align-items:center;
 		width:150px;
-		height:200px;
+		height:211px;
 		font-size: small;
-		color:black;
+		color:#bbb;
 		background-color:none;
-		border: dashed;
+		border: dashed #bbb;
 		border-width: 1px;
 		cursor:pointer; 
 	}
@@ -137,7 +148,7 @@
 				<div style="display: flex;">	
 					<p class="clmn">発行者</p>
 					<input class="form2" type="text" name="publiser">		
-					<p class="clmn">発行年</p>
+					<p class="clmn">発行年（必須）</p>
 					<input
 						class="form2"
 						type="number" 
@@ -147,10 +158,10 @@
 					>
 				</div>
 				<div style="display: flex;">
-					<p class="clmn">購入日（必須）</p>
+					<p class="clmn">購入日</p>
 					<input
 						class="form2"
-						style="width:152px"
+						style="width:153px"
 						type="date"
 						id="purchaseDate"
 						name="purchaseDate"
@@ -176,7 +187,7 @@
 	<script>
 		const titleInput = document.getElementById('title');
 		const authorInput = document.getElementById('author');
-		const purchaseDateInput = document.getElementById('purchaseDate');
+		const publiserYearInput = document.getElementById('publiserYear');
 		const categoryInput = document.getElementById('category');
 		const submitBtn = document.getElementById('submitBtn');
 		
@@ -185,7 +196,7 @@
 			//タイトル、著者、購入日、カテゴリの入力確認
 			if(titleInput.value.trim() !== ''
 				&& authorInput.value.trim() !== ''
-				&& purchaseDateInput.value.trim() !== ''
+				&& publiserYearInput.value.trim() !== ''
 				&& categoryInput.value.trim() !== ''
 			){
 				//空白以外を確認
@@ -202,7 +213,7 @@
 		//必須項目にリスナーを付与
 		titleInput.addEventListener('input', checkInputs);
 		authorInput.addEventListener('input', checkInputs);
-		purchaseDateInput.addEventListener('input', checkInputs);
+		publiserYearInput.addEventListener('input', checkInputs);
 		categoryInput.addEventListener('input', checkInputs);
 		
 		//アップロード画像を表示
@@ -221,6 +232,7 @@
 						img.src = e.target.result;
 						img.style.width = '150px';
 						img.style.cursor= 'pointer';
+						img.style.border= '1px solid #bbb';
 						img.onclick = () => document.getElementById('imageInput').click();				
 						placeholder.replaceWith(img);
 					}

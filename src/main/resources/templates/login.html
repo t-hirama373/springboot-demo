@@ -41,17 +41,21 @@
 	<div style="position:absolute; top:100px; left:250px">
 		<h1>ログイン</h1>
 		<hr style="width:850px">
-		<p style="margin-bottom:25px">
-			登録情報を入力してください。
-		</p>
+		<div th:if="!${param.error}">
+			<div th:if="!${param.logout}">
+				<p style="margin-bottom:25px">
+					登録情報を入力してください。
+				</p>
+			</div>	
+		</div>		
 		<div
 			th:if="${param.error}"
-			style="font-size:small; color:orangered">
+			style="font-size:small; color:orangered; margin-bottom:25px">
 			アカウントまたはパスワードが不正です。
 		</div>
 		<div 
 			th:if="${param.logout}"
-			style="font-size:small; color:orangered">
+			style="font-size:small; color:orangered; margin-bottom:25px">
 			ログアウトしました。
 		</div>
 		<div class="container">
@@ -102,21 +106,22 @@
 	 	   </form>
 		</div>
 		<hr style="width:850px">
-		<p style="margin-bottom:25px">
-			パスワードをお忘れの場合、登録アカウントへ再設定ページのURLを送信できます。
-		</p>
+		<div th:if="!${success}">
+			<div th:if="!${error}">
+				<p style="margin-bottom:25px">
+					パスワードをお忘れの場合、登録アカウントへ再設定ページのURLを送信できます。
+				</p>
+			</div>	
+		</div>
+		<p 
+			th:if="${success}"
+			th:text="${success}"
+			style="color:green; margin-bottom:25px"></p>
+		<p 
+			th:if="${error}"
+			th:text="${error}"
+			style="color:orangered; margin-bottom:25px"></p>
 	
-		<!--再設定URLの送信結果-->
-		<div id="result">
-			<a 
-				th:if="${success}"
-				th:text="${success}"
-				style="color:green"></a>
-			<a 
-				th:if="${error}"
-				th:text="${error}"
-				style="color:orangered"></a>
-		</div>	
 		<div class="container">
 			<form th:action="@{/login/sendAddress}" method="post">
 				<div style="display: flex;">

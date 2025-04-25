@@ -3,7 +3,7 @@
 <mapper namespace="com.example.demo.repository.BookRepository">
 	
 	<!-- 書籍一覧表示 -->
-	<select id="selectBookDataIdAsc" resultType="com.example.demo.model.BookDto">
+	<select id="selectBookData" resultType="com.example.demo.model.BookDto">
 		select
 			id,
 			title,
@@ -13,16 +13,17 @@
 			publiser_year,
 			to_char(purchase_date, 'yyyy-mm-dd') as purchaseDate,
 			category,
+			regexp_replace(
+				encode(book_image, 'base64'),E'[\\n\\r]', '', 'g'
+			) as bookImageStr,
 			status
 			from book
-	</select>
-	
-	<!-- 画像一覧表示 -->
-	<select id="selectImageBase64byAsc">
-		select regexp_replace(
-			encode(book_image, 'base64'),E'[\\n\\r]', '', 'g'
-		)
-		from book
+			<where>
+				<if test="status != null">
+					status = #{status}
+				</if>
+			</where>
+			order by id asc
 	</select>
 	
 	<!-- 新規登録 -->
@@ -101,6 +102,7 @@
 	<!-- 書籍IDから書籍情報を取得 -->
 	<select id="selectTargetBookData">
 		select
+			id,
 			title,
 			author,
 			detail,
@@ -122,4 +124,9 @@
 		)
 		from book where id = #{id}
 	</select>
+	
+	<!-- 登録削除 -->
+	<delete id="deleteBookData">
+		delete from book where id = #{id}
+	</delete>
 </mapper>

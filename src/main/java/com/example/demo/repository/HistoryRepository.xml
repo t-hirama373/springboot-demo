@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.repository.HistoryRepository">
+	
+	<!-- 履歴一覧表示 -->
+	<select id="selectHistoryData" resultType="com.example.demo.model.HistoryDto">
+		select
+			process,
+			to_char(process_date, 'yyyy-mm-dd [hh24:mi]') as processDate,
+			username,
+			address,
+			book_title
+			from history
+			order by process_date desc
+	</select>
+	
+	<!-- 貸出/返却処理記録 -->
+	<insert id="insertProcessData">
+		insert into history (
+			process,
+			process_date,
+			username,
+			address,
+			book_title,
+			book_id
+			) values (
+			#{process},
+			cast(#{processDate} as timestamp),
+			#{username},
+			#{address},
+			#{bookTitle},
+			#{bookId})
+	</insert>
+</mapper>

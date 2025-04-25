@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>書籍一覧</title>
+</head>
+
+<style>
+	h4,p,a{
+		text-decoration: none;
+		color:black;
+		font-size: small;
+		border-bottom: 1px solid transparent;
+	}
+	a:hover{
+		border-bottom: 1px solid black;
+	}
+	.grid-container{
+		display: grid;
+		grid-template-columns: 150px 1fr;
+		gap: 20px;
+		height:150px;
+		margin-right: 100px;
+		margin-bottom: 30px;
+	}
+	.grid-item1{
+		margin-top:10px;
+		margin-bottom:30px;
+		justify-content: center;
+		background-color: #fff;
+	}
+	.grid-item2{
+		background-color: #fff;
+	}
+	.clmn{
+		display:inline-block;
+		margin-top:10px;
+		margin-bottom:10px;
+		width:200px
+	}
+	.form{
+		margin-top:10px;
+		margin-bottom:10px;
+		margin-left:10px;
+		width:200px;
+	}
+	#submitBtn{
+		color:white;
+		border:none;
+		width:50px;
+		height:25px
+	}
+	.btn-enabled{
+		color:white;
+		background-color: black;
+		cursor: pointer;
+	}
+	.btn-disabled{
+		background-color: lightgray;
+	}
+	.st-available{
+		margin-top:10px;
+		display:flex;
+		justify-content: center;
+		align-items:center;
+		font-size: 12px;
+		border-style: initial;
+		border: 1px solid;
+		width:55px;
+		height:25px;
+	}
+	.st-borrowed{
+		margin-top:10px;
+		display:flex;
+		justify-content: center;
+		align-items:center;
+		font-size: 12px;
+		border-style: initial;
+		color:white;
+		background-color:black;
+		width:55px;
+		height:25px;
+	}
+	.book_img{
+		display:flex;
+		justify-content: center;
+		align-items:center;
+		width:100px;
+		height:141px;
+		font-size: small;
+		color:#bbb;
+		background-color:none;
+		border: dashed #bbb;
+		border-width: 1px;
+	}
+</style>
+
+<body>
+	<h4 style="margin-left: 25px; margin-bottom:50px;">
+		書籍管理システム@<span th:text="${username}"></span>
+	</h4>
+	<a href="/bookList" style="margin-left: 25px;">書籍一覧へ戻る</a>
+	
+	<!--見出-->
+	<div style="position:absolute; top:100px; left:250px">
+		<h1>貸出履歴</h1>
+		<hr style="width:850px">
+		<div th:if="!${result}">
+			<p th:text="${count}" style="margin-bottom:50px"></p>
+		</div>
+		<div th:if="${result}">
+			<p th:text="${result}" style="margin-bottom:50px; color:green"></p>
+		</div>
+		<div style="display:flex">
+			<p style="width:60px">項目</p>
+			<p style="width:150px">日時</p>
+			<p style="width:180px">利用者</p>
+			<p style="width:240px">メール</p>
+			<p>タイトル</p>
+		</div>
+		<!--書籍一覧-->
+		<div th:if="${history != null and !history.isEmpty()}">
+			<div th:each="log : ${history}">
+				<!--情報表示-->
+				<div style="display:flex">
+					<p th:text="${log.process}" style="width:60px"></p>
+					<p th:text="${log.processDate}" style="width:150px"></p>
+					<p th:text="${log.username}" style="width:180px"></p>
+					<p th:text="${log.address}" style="width:240px"></p>
+					<p th:text="${log.bookTitle}"></p>	
+				</div>	
+			</div>	
+		</div>
+	</div>
+			
+	<script src="/js/jquery-3.7.1.min"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	
+</body>
+</html>
