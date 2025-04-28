@@ -23,6 +23,9 @@ public interface UserRepository {
 	//本棚名取得
 	String selectShelfName(String shelfName);
 	
+	//本棚名取得(管理者)
+	String selectShelfNameByUsername(String username);
+	
 	// パスワード更新
 	void updateUserData(String username, String password);
 	

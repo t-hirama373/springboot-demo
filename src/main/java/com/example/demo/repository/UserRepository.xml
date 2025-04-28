@@ -19,6 +19,11 @@
 		select shelf_name from owner where shelf_name = #{shelfName}
 	</select>
 	
+	<!-- 本棚名取得(管理者) -->
+	<select id="selectShelfNameByUsername">
+		select shelf_name from owner where username = #{username}
+	</select>
+	
 	<!-- パスワード変更 -->
 	<update id="updateUserData">
 		update owner set password = #{password} where username = #{username}

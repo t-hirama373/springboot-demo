@@ -45,6 +45,12 @@ public class UserService implements UserDetailsService {
 		return userRepository.selectShelfName(ShelfName);
 	}
 	
+	//本棚名の取得(管理者)
+	@Transactional
+	public String getShelfNameByUsername(String username) {
+		return userRepository.selectShelfNameByUsername(username);
+	}
+	
 	//パスワード変更処理実行(認証)
 	@Transactional
 	public void updateUserInfo(String username, String password) {

@@ -45,7 +45,7 @@ public class BookController {
 		Model model) {
 		//アカウント名取得
 		String username = user.getUsername();
-		String shelf = userService.getShelfName(username);
+		String shelf = userService.getShelfNameByUsername(username);
 		model.addAttribute("shelf",shelf);
 		//書籍情報取得
 		model.addAttribute("status", status);

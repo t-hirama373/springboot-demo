@@ -54,7 +54,7 @@
 			border:1px solid #000;
 			border-radius: 0px;
 			padding-top:0px;
-			height:23px;
+			height:22px;
 			font-size: small;
 			vertical-align: middle;
 		}
@@ -69,7 +69,7 @@
 			border:1px solid #000;
 			border-radius: 0px;
 			width:90px;
-			height:24px;
+			height:23px;
 			font-size: small;
 			cursor: pointer;
 			position:relative;
@@ -114,7 +114,7 @@
 			<!--検索フォーム-->
 			<form th:action="@{/bookList/history}" method="get" id="keywordForm">
 				<input type="text" id="keyword" name="keyword" th:value="${keyword}"
-					style="width:200px ;margin-left:108px;"
+					style="width:200px ;margin-left:105px;"
 					placeholder="タイトル、利用者氏名から検索"/>
 				<button type="submit" class="bt-keyword">検索</button>
 			</form>
@@ -139,7 +139,7 @@
 					<p th:text="${log.processDate}" style="width:150px"></p>
 					<p th:text="${log.username}" style="width:180px"></p>
 					<p th:text="${log.address}" style="width:240px"></p>
-					<p th:text="${log.bookTitle}"></p>	
+					<p th:text="${log.bookTitle}"></p>
 				</div>
 				<hr class="hr-list">
 			</div>
