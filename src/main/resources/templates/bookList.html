@@ -188,7 +188,7 @@
 				<button type="submit" class="bt-keyword">検索</button>
 			</form>
 		</div>
-		<hr style="width:850px">
+		<hr style="margin-left:0px; width:850px">
 		<!--アナウンス-->
 		<div style="display:flex">
 			<p th:text="'結果件数 : '+${count}" style="margin-bottom:50px"></p>
@@ -223,9 +223,12 @@
 						<div th:if="${book.status == 0}" class="st-borrowed">貸出中</div>
 					</div>
 					<h4 th:text="${book.title}" style="margin-bottom:-10px"></h4>
-					<p th:text="'#'+${book.category}" style="margin-bottom:-10px"></p>
-					<p th:text="${book.publiserYear}" style="margin-bottom:5px"></p>
-					<hr style="margin-left:0px; width:160px; margin-top:8px; margin-bottom:6px">
+					<div style="display: flex;">
+						<p th:text="${book.publiser}" style="margin-bottom:-10px"></p>
+						<p th:text="'('+${book.publiserYear}+')'" style="margin-left:5px"></p>
+					</div>
+					<p th:text="'#'+${book.category}" style="margin-top:-10px; margin-bottom:5px"></p>
+					<hr style="margin-left:0px; width:680px; margin-top:8px; margin-bottom:6px">
 					<!--機能-->
 					<div style="display: flex;">
 						<!--管理-->
