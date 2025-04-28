@@ -22,11 +22,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.demo.model.BookDto;
 import com.example.demo.service.BookService;
 import com.example.demo.service.HistoryService;
+import com.example.demo.service.UserService;
 
 @Controller
 @RequestMapping("/bookList")
 public class BookController {
 	
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private BookService bookService;
 	@Autowired
@@ -37,16 +40,21 @@ public class BookController {
 	public String bookList(
 		@AuthenticationPrincipal UserDetails user,
 		@RequestParam(required=false) Integer status,
+		@RequestParam(required=false) String sort,
+		@RequestParam(required=false) String keyword,
 		Model model) {
 		//アカウント名取得
 		String username = user.getUsername();
-		model.addAttribute("username",username);
-		//条件：貸出状態
-		model.addAttribute("status", status);
+		String shelf = userService.getShelfName(username);
+		model.addAttribute("shelf",shelf);
 		//書籍情報取得
-		model.addAttribute("books", bookService.getBookData(status));
+		model.addAttribute("status", status);
+		model.addAttribute("sort", sort);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("books", bookService.getBookData(status, sort, keyword));
 		//該当件数取得
-		model.addAttribute("count", "結果件数 : "+bookService.getBookData(status).size());
+		model.addAttribute(
+			"count",bookService.getBookData(status, sort, keyword).size());
 		
 		return "bookList";
 	}
@@ -69,14 +77,24 @@ public class BookController {
 	@GetMapping("history")
 	public String history(
 		@AuthenticationPrincipal UserDetails user,
+		@RequestParam(required=false) String process,
+		@RequestParam(required=false) String startDate,
+		@RequestParam(required=false) String endDate,
+		@RequestParam(required=false) String keyword,
 		Model model) {
 		//アカウント名取得
 		String username = user.getUsername();
 		model.addAttribute("username",username);
-		//書籍情報取得
-		model.addAttribute("history", historyService.getHistoryData());
+		//履歴情報取得
+		model.addAttribute("process", process);
+		model.addAttribute("startDate", startDate);
+		model.addAttribute("endDate", endDate);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("history",
+			historyService.getHistoryData(process,startDate,endDate, keyword));
 		//該当件数取得
-		model.addAttribute("count", "結果件数 : "+historyService.getHistoryData().size());
+		model.addAttribute("count",
+			historyService.getHistoryData(process,startDate,endDate, keyword).size());
 		
 		return "history";
 	}

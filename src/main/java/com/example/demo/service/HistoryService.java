@@ -18,8 +18,10 @@ public class HistoryService {
 	
 	//一覧表示
 	@Transactional
-	public List<HistoryDto> getHistoryData() {							
-		return historyRepository.selectHistoryData();
+	public List<HistoryDto> getHistoryData(
+		String process, String startDate, String endDate, String keyword) {							
+		return historyRepository.selectHistoryData(
+				process, startDate, endDate, keyword);
 	}
 	
 	//貸出/返却処理記録

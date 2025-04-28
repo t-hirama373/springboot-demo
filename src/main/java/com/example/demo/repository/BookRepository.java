@@ -12,7 +12,7 @@ import com.example.demo.model.BookDto;
 public interface BookRepository {
 	
 	//書籍一覧を取得する
-	List<BookDto>selectBookData(Integer status);
+	List<BookDto>selectBookData(Integer status, String sort, String keyword);
 	
 	//新規登録
 	void insertBookData(BookDto bookData);

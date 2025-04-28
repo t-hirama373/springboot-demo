@@ -8,111 +8,121 @@
 </head>
 
 <style>
-	h4,p,a{
-		text-decoration: none;
-		color:black;
-		font-size: small;
-		border-bottom: 1px solid transparent;
-	}
-	a:hover{
-		border-bottom: 1px solid black;
-	}
-	.grid-container{
-		display: grid;
-		grid-template-columns: 150px 1fr;
-		gap: 20px;
-		height:150px;
-		margin-right: 100px;
-		margin-bottom: 30px;
-	}
-	.grid-item1{
-		margin-top:10px;
-		margin-bottom:30px;
-		justify-content: center;
-		background-color: #fff;
-	}
-	.grid-item2{
-		background-color: #fff;
-	}
-	.clmn{
-		display:inline-block;
-		margin-top:10px;
-		margin-bottom:10px;
-		width:200px
-	}
-	.form{
-		margin-top:10px;
-		margin-bottom:10px;
-		margin-left:10px;
-		width:200px;
-	}
-	#submitBtn{
-		color:white;
-		border:none;
-		width:50px;
-		height:25px
-	}
-	.btn-enabled{
-		color:white;
-		background-color: black;
-		cursor: pointer;
-	}
-	.btn-disabled{
-		background-color: lightgray;
-	}
-	.st-available{
-		margin-top:10px;
-		display:flex;
-		justify-content: center;
-		align-items:center;
-		font-size: 12px;
-		border-style: initial;
-		border: 1px solid;
-		width:55px;
-		height:25px;
-	}
-	.st-borrowed{
-		margin-top:10px;
-		display:flex;
-		justify-content: center;
-		align-items:center;
-		font-size: 12px;
-		border-style: initial;
-		color:white;
-		background-color:black;
-		width:55px;
-		height:25px;
-	}
-	.book_img{
-		display:flex;
-		justify-content: center;
-		align-items:center;
-		width:100px;
-		height:141px;
-		font-size: small;
-		color:#bbb;
-		background-color:none;
-		border: dashed #bbb;
-		border-width: 1px;
-	}
+	h4,p,a,lavel{
+			text-decoration: none;
+			color:black;
+			font-size: small;
+			border-bottom: 1px solid transparent;
+		}
+		a:hover{
+			border-bottom: 1px solid black;
+		}
+		select{
+			color:black;
+			font-size: small;
+			border:none;
+			cursor:pointer;
+		}
+		.grid-container{
+			display: grid;
+			grid-template-columns: 150px 1fr;
+			gap: 20px;
+			height:150px;
+			margin-right: 100px;
+			margin-bottom: 50px;
+		}
+		.grid-item1{
+			margin-top:10px;
+			margin-bottom:30px;
+			justify-content: center;
+			background-color: #fff;
+		}
+		.grid-item2{
+			background-color: #fff;
+		}
+		.bt-keyword{
+			margin-left:0px;
+			font-size:12px;
+			height:25px;
+			border:none;
+			color:#fff;
+			background-color:#000;
+			position:absolute;
+			top:42px;
+		}
+		input{
+			border:1px solid #000;
+			border-radius: 0px;
+			padding-top:0px;
+			height:23px;
+			font-size: small;
+			vertical-align: middle;
+		}
+		input:focus{
+			border:1px solid #000;
+			outline:0px solid #000;
+			border-radius: 0px;
+			height:23px;
+			font-size: small;
+		}
+		.input-date{
+			border:1px solid #000;
+			border-radius: 0px;
+			width:90px;
+			height:24px;
+			font-size: small;
+			cursor: pointer;
+			position:relative;
+			top:0.5px;
+		}
+		.input-date:focus{
+			outline:0px solid #000;
+		}
+		.hr-list{
+			margin-top:-10px;
+			margin-bottom:0px;
+		}
 </style>
 
 <body>
 	<h4 style="margin-left: 25px; margin-bottom:50px;">
-		書籍管理システム@<span th:text="${username}"></span>
+		書籍管理システム@<span th:text="${shelf}"></span>
 	</h4>
 	<a href="/bookList" style="margin-left: 25px;">書籍一覧へ戻る</a>
-	
 	<!--見出-->
 	<div style="position:absolute; top:100px; left:250px">
-		<h1>貸出履歴</h1>
+		<div style="display:flex; align-items: baseline; margin-bottom:-8px">
+			<h1 style="margin-right:40px">貸出履歴</h1>
+			<!--状態プルダウン-->
+			<form th:action="@{/bookList/history}" method="get" id="filterForm">
+				<select name="process" id="processSelect" th:onchange="this.form.submit()" style="margin-right:50px">
+					<option value="">すべて</option>
+					<option value="貸出" th:selected="${process=='貸出'}">貸出</option>
+					<option value="返却" th:selected="${process=='返却'}">返却</option>
+				</select>
+			</form>
+			<!--開始日・終了日フォーム-->
+			<form th:action="@{/bookList/history}" method="get">
+				<input type="date" id="startDate" name="startDate" th:value="${startDate}"
+					class="input-date"/>
+				<label style="margin-left:3px">---</label>
+				<label style="position:relative; top:1.5px; left:-3px">></label>
+				<input type="date" id="endDate" name="endDate" th:value="${endDate}"
+					class="input-date"/>
+				<button type="submit" class="bt-keyword">指定</button>
+			</form>
+			<!--検索フォーム-->
+			<form th:action="@{/bookList/history}" method="get" id="keywordForm">
+				<input type="text" id="keyword" name="keyword" th:value="${keyword}"
+					style="width:200px ;margin-left:108px;"
+					placeholder="タイトル、利用者氏名から検索"/>
+				<button type="submit" class="bt-keyword">検索</button>
+			</form>
+		</div>
 		<hr style="width:850px">
-		<div th:if="!${result}">
-			<p th:text="${count}" style="margin-bottom:50px"></p>
-		</div>
-		<div th:if="${result}">
-			<p th:text="${result}" style="margin-bottom:50px; color:green"></p>
-		</div>
+		<!--アナウンス-->
+		<p th:text="'結果件数 : '+${count}" style="margin-bottom:50px"></p>
+		<!--書籍一覧-->
 		<div style="display:flex">
 			<p style="width:60px">項目</p>
 			<p style="width:150px">日時</p>
@@ -120,7 +130,7 @@
 			<p style="width:240px">メール</p>
 			<p>タイトル</p>
 		</div>
-		<!--書籍一覧-->
+		<hr class="hr-list">
 		<div th:if="${history != null and !history.isEmpty()}">
 			<div th:each="log : ${history}">
 				<!--情報表示-->
@@ -130,11 +140,12 @@
 					<p th:text="${log.username}" style="width:180px"></p>
 					<p th:text="${log.address}" style="width:240px"></p>
 					<p th:text="${log.bookTitle}"></p>	
-				</div>	
-			</div>	
+				</div>
+				<hr class="hr-list">
+			</div>
 		</div>
 	</div>
-			
+
 	<script src="/js/jquery-3.7.1.min"></script>
 	<script src="/js/bootstrap.min.js"></script>
 	

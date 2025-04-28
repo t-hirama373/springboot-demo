@@ -18,12 +18,25 @@
 			) as bookImageStr,
 			status
 			from book
-			<where>
-				<if test="status != null">
-					status = #{status}
-				</if>
-			</where>
-			order by id asc
+		<where>
+			<if test="status != null">
+				status = #{status}
+			</if>
+			<if test="keyword != null and keyword != ''">
+				<trim prefix="and (" suffix=")" prefixOverrides="or">
+					or title ilike concat('%',#{keyword},'%')
+					or category ilike concat('%',#{keyword},'%')
+				</trim>
+			</if>
+		</where>
+		<choose>
+			<when test="sort == 'title' or sort == null">
+				order by title asc, publiser_year desc
+			</when>
+			<when test="sort == 'publiserYear'">
+				order by publiser_year desc, title asc
+			</when>
+		</choose>
 	</select>
 	
 	<!-- 新規登録 -->

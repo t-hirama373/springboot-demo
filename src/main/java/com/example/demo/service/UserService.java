@@ -39,10 +39,13 @@ public class UserService implements UserDetailsService {
 		userRepository.insertUserData(userData);
 	}
 	
-	//パスワード変更処理確認
-	//public void passwordCheck();
+	//本棚名の取得
+	@Transactional
+	public String getShelfName(String ShelfName) {
+		return userRepository.selectShelfName(ShelfName);
+	}
 	
-	//パスワード変更処理実行
+	//パスワード変更処理実行(認証)
 	@Transactional
 	public void updateUserInfo(String username, String password) {
 		userRepository.updateUserData(username, password);
@@ -70,7 +73,7 @@ public class UserService implements UserDetailsService {
 		return userRepository.selectResetTokenExpiration(resetToken);
 	}
 	
-	//パスワード変更処理実行
+	//パスワード変更処理実行(未認証)
 	@Transactional
 	public void updateUserInfoByToken(String resetToken, String password) {
 		userRepository.updateUserDataByToken(resetToken, password);

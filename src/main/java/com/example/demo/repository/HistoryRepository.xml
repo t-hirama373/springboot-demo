@@ -11,24 +11,40 @@
 			address,
 			book_title
 			from history
-			order by process_date desc
+		<where>
+			<if test="process != null">
+				process = #{process}
+			</if>
+			<if test="startDate != null and startDate != ''">
+				process_date &gt;= cast(concat(#{startDate},' 00:00:00')as timestamp)
+			</if>
+			<if test="endDate != null and endDate != ''">
+				and process_date &lt;= cast(concat(#{endDate},' 23:59:59')as timestamp)
+			</if>
+			<if test="keyword != null and keyword != ''">
+				<trim prefix="and (" suffix=")" prefixOverrides="or">
+					or username ilike concat('%',#{keyword},'%')
+					or book_title ilike concat('%',#{keyword},'%')
+				</trim>	
+			</if>
+		</where>
+		order by process_date desc
 	</select>
 	
 	<!-- 貸出/返却処理記録 -->
-	<insert id="insertProcessData">
-		insert into history (
-			process,
-			process_date,
-			username,
-			address,
-			book_title,
-			book_id
-			) values (
-			#{process},
-			cast(#{processDate} as timestamp),
-			#{username},
-			#{address},
-			#{bookTitle},
-			#{bookId})
+	<insert id="insertProcessData">insert into history (
+		process,
+		process_date,
+		username,
+		address,
+		book_title,
+		book_id
+		) values (
+		#{process},
+		cast(#{processDate} as timestamp),
+		#{username},
+		#{address},
+		#{bookTitle},
+		#{bookId})
 	</insert>
 </mapper>

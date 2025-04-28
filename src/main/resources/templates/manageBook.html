@@ -105,17 +105,32 @@
 		width:55px;
 		height:25px;
 	}
+	input{
+			border:1px solid #000;
+			border-radius: 0px;
+			padding-top:0px;
+			height:23px;
+			font-size: small;
+			vertical-align: middle;
+		}
+		input:focus{
+			border:1px solid #000;
+			outline:0px solid #000;
+			border-radius: 0px;
+			height:23px;
+			font-size: small;
+		}
 </style>
 
 <body>
 	<h4 style="margin-left: 25px; margin-bottom:50px;">
-		書籍管理システム@<span th:text="${username}"></span>
+		書籍管理システム@<span th:text="${shelf}"></span>
 	</h4>	
 	<a href="/bookList" style="margin-left: 25px">書籍一覧へ戻る</a>
-	
 	<div style="position:absolute; top:100px; left:250px">
 		<h1>貸出管理</h1>
 		<hr style="width:850px; margin-left:0px;">
+		<!--アナウンス-->
 		<p style="margin-bottom:50px">
 			以下の書籍の貸出管理を行います。
 		</p>

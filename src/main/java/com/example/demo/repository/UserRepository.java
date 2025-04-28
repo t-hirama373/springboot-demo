@@ -20,6 +20,9 @@ public interface UserRepository {
 	// 新規ユーザ登録
 	void insertUserData(UserDto userData);
 	
+	//本棚名取得
+	String selectShelfName(String shelfName);
+	
 	// パスワード更新
 	void updateUserData(String username, String password);
 	

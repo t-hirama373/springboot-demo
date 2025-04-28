@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>書籍一覧(管理者)</title>
+	<title>書籍一覧</title>
 </head>
 
 <style>
@@ -29,7 +29,6 @@
 		gap: 20px;
 		height:150px;
 		margin-right: 100px;
-		margin-bottom: 50px;
 	}
 	.grid-item1{
 		margin-top:10px;
@@ -39,6 +38,7 @@
 	}
 	.grid-item2{
 		background:none;
+		margin-bottom:60px;
 	}
 	.st-available{
 		margin-top:10px;
@@ -77,32 +77,6 @@
 		border: dashed #bbb;
 		border-width: 1px;
 	}
-	.bt-active{
-		color:#000;
-		background:none;
-		border:none;
-		padding:0px;
-		margin-right:15px;
-	}
-	.bt-active:hover{
-		border-bottom: 1px solid #000;
-	}
-	.bt-non-active{
-		color:#bbb;
-		background:none;
-		border:none;
-		padding:0px;
-		margin-right:15px;
-	}
-	.delete-bt{
-		color:#000;
-		background:none;
-		font-size: small;
-		border:none;
-	}
-	.delete-bt:hover{
-		border-bottom: 1px solid #000;
-	}
 	.bt-keyword{
 		margin-left:0px;
 		font-size:12px;
@@ -131,46 +105,30 @@
 		height:23px;
 		font-size: small;
 	}
+	.showDetail{
+		overflow:hidden;
+		width:500px;
+		height:1.5em;
+	}
+	.showDetail-all-bt{
+		background:none;
+		border:none;
+	}
+	.showDetail-all-bt:hover{
+		border-bottom: 1px solid #000;
+	}
 </style>
 
 <body>
 	<h4 style="margin-left: 25px; margin-bottom:50px;">
 		書籍管理システム@<span th:text="${shelf}"></span>
 	</h4>
-	<!--パスワード設定へ-->
-	<div style="display:flex">
-		<a href="/passwordSetting"
-		   style="margin-left:25px; margin-bottom:5px"
-		>パスワード設定</a>
-	</div>
-	<!--ログアウト-->
-	<div style="display:flex">
-		<form id="logout_bt" th:action="@{/logout}" method="post" style="display:none;">
-			<input type="hidden" name="${_csrf.paramerterName}" th:value="${_csrf.token}"/>
-		</form>
-		<a  href="#"
-			style="cursor:pointer; margin-left: 25px; margin-bottom:30px"
-			onclick="event.preventDefault(); document.getElementById('logout_bt').submit()"
-		>ログアウト</a>
-	</div>
-	<!--新規登録へ-->
-	<div style="display:flex">	
-		<a href="/bookList/addBook" style="margin-left: 25px; margin-bottom:10px">
-			新規登録
-		</a>
-	</div>	
-	<!--貸出履歴へ-->
-	<div style="display:flex">
-		<a href="/bookList/history" style="margin-left: 25px">
-			貸出履歴
-		</a>
-	</div>
 	<!--見出-->
 	<div style="position:absolute; top:100px; left:250px">
 		<div style="display:flex; align-items: baseline; margin-bottom:-8px">
 			<h1 style="margin-right:40px">書籍一覧</h1>
 			<!--フィルタコマンド-->
-			<form th:action="@{/bookList}" method="get" id="filterForm">
+			<form th:action="@{/showBookList}" method="get" id="filterForm">
 				<!--状態プルダウン-->
 				<select name="status" id="statusSelect" th:onchange="this.form.submit()" style="margin-right:20px">
 					<option value="">すべて</option>
@@ -188,7 +146,7 @@
 				<button type="submit" class="bt-keyword">検索</button>
 			</form>
 		</div>
-		<hr style="width:850px">
+		<hr style="margin-left:0px; width:850px">
 		<!--アナウンス-->
 		<div style="display:flex">
 			<p th:text="'結果件数 : '+${count}" style="margin-bottom:50px"></p>
@@ -201,7 +159,11 @@
 		</div>	
 		<!--書籍一覧-->
 		<div th:if="${books != null and !books.isEmpty()}">
-			<div th:each="book : ${books}" div class="grid-container">
+			<div 
+				th:each="book : ${books}" 
+				th:id="'grid-container-'+${book.id}"
+				div class="grid-container"
+				style="margin-bottom:50px">
 				<!--書籍画像-->
 				<div class="grid-item1">
 					<!--画像あり-->
@@ -223,79 +185,70 @@
 						<div th:if="${book.status == 0}" class="st-borrowed">貸出中</div>
 					</div>
 					<h4 th:text="${book.title}" style="margin-bottom:-10px"></h4>
-					<p th:text="'#'+${book.category}" style="margin-bottom:-10px"></p>
-					<p th:text="${book.publiserYear}" style="margin-bottom:5px"></p>
-					<hr style="margin-left:0px; width:160px; margin-top:8px; margin-bottom:6px">
-					<!--機能-->
 					<div style="display: flex;">
-						<!--管理-->
-						<form th:action="@{/bookList/{id}/manageBook(id=${book.id})}"
-							method="get" style="display: inline">
-							<button class="bt-active">&#x21C4; 管理</button>
-						</form>
-						<!--貸出可-->
-						<div th:if="${book.status == 1}">
-							<!--編集-->
-							<form  th:action="@{/bookList/{id}/editBook(id=${book.id})}"
-								method="get" style="display: inline">
-								<button class="bt-active">&#x270E; 編集</button>
-							</form>	
-							<!--削除-->
-							<button th:id="'delete-btn-'+${book.id}"
-								class="bt-active">&#x00D7; 削除</button>
-							<div th:id="'confirm-box-'+${book.id}" style="display:none">
-								<lavel style="font-size: small;margin-left:-10px">...</lavel>
-								<form th:action="@{/bookList/{id}/delete(id=${book.id})}"
-									method="post" style="display: inline">
-									<input type="hidden" name="title" th:value="${book.title}"/>
-									<button class="delete-bt">実行</button>
-								</form>
-								<lavel style="font-size: small">:</lavel>
-								<button button-type="button" class="delete-bt">キャンセル</button>
-							</div>	
-						</div>
-						<!--貸出中-->
-						<div th:if="${book.status == 0}">
-							<!--更新-->
-							<button class="bt-non-active">&#x270E; 編集</button>	
-							<!--削除-->
-							<button class="bt-non-active">&#x00D7; 削除</button>
-						</div>
+						<p th:text="${book.publiser}" style="margin-bottom:-10px"></p>
+						<p th:text="'('+${book.publiserYear}+')'" style="margin-left:5px"></p>
 					</div>
+					<p th:text="'#'+${book.category}" style="margin-top:-10px; margin-bottom:5px"></p>
+					<hr style="margin-left:0px; width:680px; margin-top:8px; margin-bottom:6px">
+					<div style="display: flex;">
+						<p
+							th:id="'bookDetail-'+${book.id}"
+							th:text="${book.detail}"
+							style="
+								overflow:hidden;
+								width:auto;
+								max-width:650px;
+								height:1.5em;
+								white-space:pre-wrap;
+								transition:all 0.3s ease;
+								margin-top:0px;
+								margin-bottom:5px;"></p>
+						<button 
+							class="showDetail-all-bt" 
+							th:id="'showDetail-all-bt-'+${book.id}"
+							style="display:inline">...</button>
+					</div>
+					<lavel style="
+						background-color:#bbb;
+						width:100px; height:100px"></lavel>
 				</div>	
 			</div>	
 		</div>
 	</div>
 	
 	<script>
-		//実行ボタン出現
-		function showConfirmBox(bookId){
-			document.getElementById('confirm-box-'+bookId).style.display = 'inline';
+		const showDetailBtn = document.getElementById('showDetail-all-bt');
+		//全文表示ボタン消失
+		function hideShowDetailBt(bookId){
+			document.getElementById('showDetail-all-bt-'+bookId).style.display = 'none';
 		}
-		//実行ボタン消失
-		function hideAllConfirmBoxes(){
-			document.querySelectorAll('[id^="confirm-box-"]').forEach(box =>{
-				box.style.display = 'none';
-			});
+		//詳細の全文表示
+		function showDetailAll(bookId){
+			document.getElementById('bookDetail-'+bookId).style.marginBottom = '100px';
+			document.getElementById('bookDetail-'+bookId).style.height = 'auto';
+			document.getElementById('bookDetail-'+bookId).style.overflow = 'visible';
+			document.getElementById('bookDetail-'+bookId).style.wordBreak = 'break-word';
+			
 		}
 		//初期化
 		document.addEventListener('DOMContentLoaded',function(){
-			//削除ボタンクリックで実行ボタン出現
-			document.querySelectorAll('[id^="delete-btn-"]').forEach(btn =>{
-				const bookId = btn.id.replace('delete-btn-','');
+			document.querySelectorAll('[id^="showDetail-all-bt-"]').forEach(btn =>{
+				const bookId = btn.id.replace('showDetail-all-bt-','');
+				const desc = document.getElementById('bookDetail-'+bookId);
+				const container = document.getElementById('grid-container-'+bookId);
+				
 				btn.addEventListener('click', function(e){
 					e.stopPropagation();
-					hideAllConfirmBoxes();
-					showConfirmBox(bookId);
+					showDetailAll(bookId);
+					hideShowDetailBt(bookId);
+					const newMargin = desc.scrollHeight+50;
+					container.style.marginBottom = newMargin+'px';
 				});
-			});
-			//実行ボタン以外クリックで実行ボタン消失
-			document.addEventListener('click', function(e){
-				hideAllConfirmBoxes();
 			});
 		});
 	</script>
-			
+		
 	<script src="/js/jquery-3.7.1.min"></script>
 	<script src="/js/bootstrap.min.js"></script>
 	

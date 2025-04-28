@@ -18,8 +18,8 @@ public class BookService {
 	
 	//一覧表示
 	@Transactional
-	public List<BookDto> getBookData(Integer status) {							
-		return bookRepository.selectBookData(status);
+	public List<BookDto> getBookData(Integer status, String sort, String keyword) {
+		return bookRepository.selectBookData(status, sort, keyword);
 	}
 	
 	//新規登録

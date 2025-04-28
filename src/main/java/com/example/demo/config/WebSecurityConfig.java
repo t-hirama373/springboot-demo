@@ -36,6 +36,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 			.authorizeHttpRequests(request -> request
 				// 認証（ログイン）が不要なアクセス
 				.requestMatchers(
+					"/showBookList/**",
 					"/login",
 					"/login/sendAddress",
 					"/login/send",

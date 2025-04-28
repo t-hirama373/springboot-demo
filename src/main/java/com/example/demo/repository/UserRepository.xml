@@ -14,6 +14,11 @@
 		insert into owner (username, password) values (#{username}, #{password})
 	</insert>
 	
+	<!-- 本棚名取得 -->
+	<select id="selectShelfName">
+		select shelf_name from owner where shelf_name = #{shelfName}
+	</select>
+	
 	<!-- パスワード変更 -->
 	<update id="updateUserData">
 		update owner set password = #{password} where username = #{username}

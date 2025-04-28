@@ -13,7 +13,8 @@ import com.example.demo.model.HistoryDto;
 public interface HistoryRepository {
 	
 	//履歴一覧を取得する
-	List<HistoryDto>selectHistoryData();
+	List<HistoryDto>selectHistoryData(
+		String process, String startDate, String endDate, String keyword);
 	
 	//貸出/返却処理記録
 	void insertProcessData(
