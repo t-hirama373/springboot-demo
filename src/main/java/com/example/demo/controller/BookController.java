@@ -43,7 +43,7 @@ public class BookController {
 		@RequestParam(required=false) String sort,
 		@RequestParam(required=false) String keyword,
 		Model model) {
-		//アカウント名取得
+		//本棚名取得
 		String username = user.getUsername();
 		String shelf = userService.getShelfNameByUsername(username);
 		model.addAttribute("shelf",shelf);
@@ -66,9 +66,10 @@ public class BookController {
 		@ModelAttribute("book") BookDto bookDto,
 		Model model)
 	{
-		//アカウント名取得
+		//本棚名取得
 		String username = user.getUsername();
-		model.addAttribute("username",username);
+		String shelf = userService.getShelfNameByUsername(username);
+		model.addAttribute("shelf",shelf);
 		
 		return "addBook";
 	}
@@ -82,9 +83,10 @@ public class BookController {
 		@RequestParam(required=false) String endDate,
 		@RequestParam(required=false) String keyword,
 		Model model) {
-		//アカウント名取得
+		//本棚名取得
 		String username = user.getUsername();
-		model.addAttribute("username",username);
+		String shelf = userService.getShelfNameByUsername(username);
+		model.addAttribute("shelf",shelf);
 		//履歴情報取得
 		model.addAttribute("process", process);
 		model.addAttribute("startDate", startDate);
@@ -106,9 +108,10 @@ public class BookController {
 		@AuthenticationPrincipal UserDetails user,
 		Model model)
 	{
-		//アカウント名取得
+		//本棚名取得
 		String username = user.getUsername();
-		model.addAttribute("username",username);
+		String shelf = userService.getShelfNameByUsername(username);
+		model.addAttribute("shelf",shelf);
 		//書籍情報取得
 		BookDto result = bookService.getTargetBookData(id);
 		BookDto response = result;
@@ -132,9 +135,10 @@ public class BookController {
 		@AuthenticationPrincipal UserDetails user,
 		Model model) 
 	{
-		//アカウント名取得
+		//本棚名取得
 		String username = user.getUsername();
-		model.addAttribute("username",username);
+		String shelf = userService.getShelfNameByUsername(username);
+		model.addAttribute("shelf",shelf);
 		//書籍情報取得
 		BookDto result = bookService.getTargetBookData(id);
 		BookDto response = result;

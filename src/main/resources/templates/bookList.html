@@ -228,7 +228,7 @@
 						<p th:text="'('+${book.publiserYear}+')'" style="margin-left:5px"></p>
 					</div>
 					<p th:text="'#'+${book.category}" style="margin-top:-10px; margin-bottom:5px"></p>
-					<hr style="margin-left:0px; width:680px; margin-top:8px; margin-bottom:6px">
+					<hr style="margin-left:0px; width:680px; margin-top:8px; margin-bottom:5px">
 					<!--機能-->
 					<div style="display: flex;">
 						<!--管理-->
@@ -283,7 +283,7 @@
 		}
 		//初期化
 		document.addEventListener('DOMContentLoaded',function(){
-			//削除ボタンクリックで実行ボタン出現
+			//削除ボタンクリックで実行ボタン表示
 			document.querySelectorAll('[id^="delete-btn-"]').forEach(btn =>{
 				const bookId = btn.id.replace('delete-btn-','');
 				btn.addEventListener('click', function(e){
@@ -292,7 +292,7 @@
 					showConfirmBox(bookId);
 				});
 			});
-			//実行ボタン以外クリックで実行ボタン消失
+			//実行ボタン以外クリックで実行ボタン非表示
 			document.addEventListener('click', function(e){
 				hideAllConfirmBoxes();
 			});

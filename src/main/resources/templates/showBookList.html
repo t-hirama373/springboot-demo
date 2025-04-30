@@ -102,7 +102,7 @@
 		outline:0px solid #000;
 		border-radius: 0px;
 		width:200px;
-		height:23px;
+		height:22px;
 		font-size: small;
 	}
 	.showDetail{
@@ -128,7 +128,7 @@
 		<div style="display:flex; align-items: baseline; margin-bottom:-8px">
 			<h1 style="margin-right:40px">書籍一覧</h1>
 			<!--フィルタコマンド-->
-			<form th:action="@{/showBookList}" method="get" id="filterForm">
+			<form th:action="@{'/showBookList/'+${shelf}}" method="get" id="filterForm">
 				<!--状態プルダウン-->
 				<select name="status" id="statusSelect" th:onchange="this.form.submit()" style="margin-right:20px">
 					<option value="">すべて</option>
@@ -171,6 +171,7 @@
 						th:if="${book.bookImageStr != null}"
 						th:src="'data:image/jpeg;base64,'+${book.bookImageStr}"
 						style="border: #bbb solid 1px;"
+							
 						width="100">
 					<!--画像なし-->
 					<label

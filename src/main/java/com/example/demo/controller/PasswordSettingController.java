@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.sql.Timestamp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.service.UserService;
@@ -34,21 +36,26 @@ public class PasswordSettingController {
 		Authentication auth,
 		Model model)
 	{
+		//トークンの有無を確認
+		if(token != null && !token.isEmpty()) {
+			//トークンからアクセス
+			String username = userService.getUsernameByResetToken(token);
+			if(username == null) {
+				throw new ResponseStatusException(
+						HttpStatus.NOT_FOUND,"URLが無効です");
+			}
+			Timestamp expiration = userService.getResetTokenExpiration(token);
+			if(expiration == null || 
+					expiration.before(new Timestamp(System.currentTimeMillis())))
+			{
+				throw new ResponseStatusException(
+						HttpStatus.NOT_FOUND,"URLが無効です");
+			}
+		}
 		//ログインからアクセス
 		if(auth != null && auth.isAuthenticated()) {
 			model.addAttribute("login", "一覧へ戻る");
 			return "passwordSetting";
-		}
-		//トークンからアクセス
-		String username = userService.getUsernameByResetToken(token);
-		if(username == null) {
-			return null;
-		}
-		Timestamp expiration = userService.getResetTokenExpiration(token);
-		if(expiration == null || 
-				expiration.before(new Timestamp(System.currentTimeMillis())))
-		{
-			return null;
 		}
 		model.addAttribute("token", token);
 		return "passwordSetting";
@@ -90,7 +97,7 @@ public class PasswordSettingController {
 		//トークンアクセスでの変更処理（パスワード変更およびトークンリセット）
 		userService.updateUserInfoByToken(token, passwordEncoder.encode(newPassword));
 		redirect.addFlashAttribute("success", "パスワードの変更が完了しました。");
-		return "redirect:/passwordSetting";
+		return "redirect:/login";
 	}
 	
 }

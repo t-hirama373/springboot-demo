@@ -47,7 +47,9 @@
 			publiser, 
 			publiser_year,
 			detail,
-			purchase_date,
+			<if test="purchaseDate != null and purchaseDate != ''">
+				purchase_date,
+			</if>	
 			category,
 			book_image,
 			created_at,
@@ -62,7 +64,9 @@
 			#{publiser}, 
 			#{publiserYear},
 			#{detail},
-			cast(#{purchaseDate} as timestamp),
+			<if test="purchaseDate != null and purchaseDate != ''">
+				cast(concat(#{purchaseDate},' 00:00:00')as timestamp),
+			</if>
 			#{category},
 			#{bookImage},
 			#{createdAt},
@@ -102,7 +106,10 @@
 			publiser = #{publiser}, 
 			publiser_year = #{publiserYear},
 			detail = #{detail},
-			purchase_date = cast(#{purchaseDate} as timestamp),
+			<if test="purchaseDate != null and purchaseDate != ''">
+				purchase_date = cast(concat(#{purchaseDate},' 00:00:00')as timestamp),
+			</if>
+
 			category = #{category},
 			<!-- 画像がnullの場合は画像更新無効 -->
 			<if test="bookImage != null">
