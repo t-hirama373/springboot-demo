@@ -51,6 +51,7 @@ public class PasswordSettingController {
 				throw new ResponseStatusException(
 						HttpStatus.NOT_FOUND,"URLが無効です");
 			}
+			
 		}
 		//ログインからアクセス
 		if(auth != null && auth.isAuthenticated()) {
